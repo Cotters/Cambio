@@ -4,10 +4,10 @@ final class GameEngine: ObservableObject {
   @Published private(set) var deck: [Card]
   @Published private(set) var hands: [Player: [Card]]
   @Published private(set) var currentPlayer: Player
-  let cardCount: Int
+  let handSize: Int
 
-  init(cardCount: Int = 4) {
-    self.cardCount = cardCount
+  init(handSize: Int = 4) {
+    self.handSize = handSize
     self.deck = Card.fullDeck.shuffled()
     self.hands = [:]
     self.currentPlayer = .south
@@ -16,13 +16,11 @@ final class GameEngine: ObservableObject {
 
   private func dealInitialHands() {
     for player in Player.allCases {
-      guard deck.count >= cardCount else { break }
-      hands[player] = Array(deck.prefix(cardCount))
-      deck.removeFirst(cardCount)
+      draw(for: player, count: handSize)
     }
   }
 
-  func draw(for player: Player, count: Int = 1) {
+  private func draw(for player: Player, count: Int = 1) {
     guard deck.count >= count else { return }
     var hand = hands[player] ?? []
     hand.append(contentsOf: deck.prefix(count))
@@ -31,11 +29,8 @@ final class GameEngine: ObservableObject {
   }
   
   func drawCardsForCurrentPlayer(amount: Int = 1) {
-    guard let hand = hands[currentPlayer] else { return }
-    guard deck.count >= amount, hand.count < 4 else { return }
-    for _ in 0..<amount {
-      hands[currentPlayer]!.append(deck.removeFirst())
-    }
+    guard hands[currentPlayer]!.count < handSize else { return }
+    draw(for: currentPlayer, count: amount)
   }
   
   func onCardSelected(_ card: Card) {

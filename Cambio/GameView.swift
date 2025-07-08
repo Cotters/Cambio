@@ -24,7 +24,7 @@ struct DeckView: View {
   }
 }
 struct GameView: View {
-  @StateObject private var engine = GameEngine(cardCount: 4)
+  @StateObject private var engine = GameEngine(handSize: 4)
   private let currentPlayer: Player = .south
 
   var body: some View {
