@@ -2,6 +2,7 @@ import Combine
 
 final class GameEngine: ObservableObject {
   @Published private(set) var deck: [Card]
+  @Published private(set) var pile: [Card] = []
   @Published private(set) var hands: [Player: [Card]]
   @Published private(set) var currentPlayer: Player
   let handSize: Int
@@ -53,8 +54,25 @@ final class GameEngine: ObservableObject {
     draw(for: currentPlayer, count: amount)
   }
   
+  func flipAllCards(for player: Player) {
+    guard let hand = hands[player] else { return }
+    let newHand = hand.map { card in
+      var newCard = card
+      newCard.flip()
+      return newCard
+    }
+    hands[player] = newHand
+  }
+  
+  func flipCardOntoPile() {
+    guard let topCard = deck.popLast() else { return }
+    let newCard = Card(rank: topCard.rank, suit: topCard.suit, isFaceUp: true)
+    pile.append(newCard)
+    print(pile.suffix(3))
+  }
+  
   func onCardSelected(_ card: Card) {
     print(card)
-    hands[currentPlayer]?.removeAll(where: { $0 == card })
+//    hands[currentPlayer]?.removeAll(where: { $0 == card })
   }
 }

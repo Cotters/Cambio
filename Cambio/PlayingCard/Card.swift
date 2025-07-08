@@ -4,6 +4,11 @@ struct Card: Identifiable, Hashable, CustomStringConvertible {
   let id = UUID()
   let rank: Rank
   let suit: Suit
+  var isFaceUp = false
+  
+  mutating func flip() {
+    isFaceUp.toggle()
+  }
 
   static var fullDeck: [Card] {
     var cards: [Card] = []

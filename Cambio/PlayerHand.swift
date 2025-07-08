@@ -11,6 +11,7 @@ struct PlayerHand: View {
     HStack {
       ForEach(cards.prefix(cards.count), id: \.self) { card in
         CardView(card: card)
+//          .zIndex(Double(deck.count))
           .matchedGeometryEffect(id: card.id, in: namespace)
 //          .zIndex(Double(cards.count)) // Do we need?
           .onTapGesture { onCardSelected(card) }

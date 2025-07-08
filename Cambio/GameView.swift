@@ -17,7 +17,14 @@ struct GameView: View {
       Spacer()
       
       VStack {
-        DeckView(namespace: dealNS, deck: engine.deck, onTap: dealOneCard)
+        HStack {
+          DeckView(namespace: dealNS, deck: engine.deck, onTap: dealOneCard)
+            .frame(height: HAND_CARD_HEIGHT)
+          DeckView(namespace: dealNS, deck: engine.pile, onTap: {})
+            .frame(height: HAND_CARD_HEIGHT)
+        }
+        .zIndex(200)
+        .padding()
 
         Text("\(engine.deck.count) cards remaining")
           .font(.callout)
@@ -34,7 +41,21 @@ struct GameView: View {
       }
     }
     .padding()
-    .onAppear { dealInitialCardsAnimated() }
+    .onAppear {
+      dealInitialCardsAnimated()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+        withAnimation(.spring) {
+          flipAllCards()
+          DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
+            flipAllCards()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+              engine.flipCardOntoPile()
+            })
+          })
+        }
+      })
+    }
+    .background(Color.blue.opacity(0.3))
   }
   
   private func dealOneCard() {
@@ -52,6 +73,17 @@ struct GameView: View {
           withAnimation(.spring()) {
             engine.draw(for: player)
           }
+        }
+      }
+    }
+  }
+  
+  private func flipAllCards() {
+    Task {
+      for player in Player.allCases {
+          try? await Task.sleep(for: .milliseconds(50))
+          withAnimation(.spring()) {
+            engine.flipAllCards(for: player)
         }
       }
     }
