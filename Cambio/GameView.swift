@@ -22,6 +22,8 @@ struct GameView: View {
             .frame(height: HAND_CARD_HEIGHT)
           DeckView(namespace: dealNS, deck: engine.pile, onTap: {})
             .frame(height: HAND_CARD_HEIGHT)
+            .transition(.slide)
+            .animation(.easeInOut(duration: 0.4), value: engine.pile)
         }
         .zIndex(200)
         .padding()

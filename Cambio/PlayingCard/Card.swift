@@ -22,7 +22,8 @@ struct Card: Identifiable, Hashable, CustomStringConvertible {
   
   // Create a function which describes the card when print(card):
   var description: String {
-    return "\(rank.rawValue) of \(suit)"
+    let faceUpText = isFaceUp ? "FaceUp" : "FaceDown"
+    return "\(rank.rawValue) of \(suit) (\(faceUpText))"
   }
 }
 
