@@ -1,35 +1,7 @@
 import SwiftUI
 
-enum Suit: String, CaseIterable {
-  case spades = "suit.spade.fill"
-  case hearts = "suit.heart.fill"
-  case diamonds = "suit.diamond.fill"
-  case clubs = "suit.club.fill"
-  
-  func colour() -> Color {
-    self == .spades || self == .clubs ? .black : .red
-  }
-}
-
-enum Rank: String, CaseIterable {
-  case two = "2"
-  case three = "3"
-  case four = "4"
-  case five = "5"
-  case six = "6"
-  case seven = "7"
-  case eight = "8"
-  case nine = "9"
-  case ten = "10"
-  case jack = "J"
-  case queen = "Q"
-  case king = "K"
-  case ace = "A"
-}
-
 struct CardView: View {
-  let rank: Rank
-  let suit: Suit
+  let card: Card
 
   var body: some View {
     ZStack {
@@ -44,14 +16,14 @@ struct CardView: View {
         let suitImageSize = cSize.height * 0.14
         
         let rankSuitStack = VStack(spacing: 2) {
-          Text(rank.rawValue)
+          Text(card.rank.rawValue)
             .font(.system(size: rankTextSize, weight: .bold))
-          Image(systemName: suit.rawValue)
+          Image(systemName: card.suit.rawValue)
             .resizable()
             .aspectRatio(contentMode: .fit)
             .frame(height: suitImageSize)
         }
-          .foregroundColor(suit.colour())
+          .foregroundColor(card.suit.colour())
           .padding(cornerSpacing)
 
         // Top‑left corner
@@ -70,9 +42,12 @@ struct CardView: View {
 
 #Preview {
   VStack(spacing: 20) {
-    CardView(rank: Rank.ace, suit: .spades)
+    CardView(card: Card(rank: .ace, suit: .spades))
       .frame(width: 90)
-    CardView(rank: .ten, suit: .hearts)
+      .onTapGesture {
+        print("Ace of Spades!")
+      }
+    CardView(card: Card(rank: .ten, suit: .hearts))
       .frame(width: 180)
   }
   .padding()
