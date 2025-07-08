@@ -1,4 +1,4 @@
-import Combine
+import SwiftUI
 
 final class GameEngine: ObservableObject {
   @Published private(set) var deck: [Card]
@@ -56,12 +56,7 @@ final class GameEngine: ObservableObject {
   
   func flipAllCards(for player: Player) {
     guard let hand = hands[player] else { return }
-    let newHand = hand.map { card in
-      var newCard = card
-      newCard.flip()
-      return newCard
-    }
-    hands[player] = newHand
+    hand.forEach { $0.flip() }
   }
   
   func flipCardOntoPile() {
@@ -72,7 +67,25 @@ final class GameEngine: ObservableObject {
   }
   
   func onCardSelected(_ card: Card) {
-    print(card)
-//    hands[currentPlayer]?.removeAll(where: { $0 == card })
+    guard let currentPlayersHand = hands[currentPlayer] else { return }
+    if (currentPlayersHand.contains(where: { $0.id == card.id })) {
+      guard let pileCard = pile.last else { return }
+      if card.rank == pileCard.rank {
+        print("Match!")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+          print("Removing card...")
+          guard let currentPlayer = self?.currentPlayer else { return }
+          self?.hands[currentPlayer]?.removeAll(where: { $0 == card })
+          self?.currentPlayer = (currentPlayer == .north) ? .south : .north
+          self?.flipCardOntoPile()
+        })
+      } else {
+        print("No match!")
+        self.currentPlayer = (currentPlayer == .north) ? .south : .north
+        self.flipCardOntoPile()
+      }
+    } else {
+      print("Not your go!!")
+    }
   }
 }

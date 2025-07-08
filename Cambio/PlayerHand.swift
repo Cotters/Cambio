@@ -9,10 +9,10 @@ struct PlayerHand: View {
 
   var body: some View {
     HStack {
-      ForEach(cards.prefix(cards.count), id: \.self) { card in
-        FlippableCard(card: card)
+      ForEach(cards.prefix(cards.count), id: \.id) { card in
+        FlippableCard(card: card, beginsFaceUp: card.isFaceUp, onTap: { onCardSelected(card) } )
           .matchedGeometryEffect(id: card.id, in: namespace)
-          .onTapGesture { onCardSelected(card) }
+//          .onTapGesture { onCardSelected(card) }
           .frame(height: HAND_CARD_HEIGHT)
 //        CardView(card: card)
 //          .zIndex(Double(deck.count))

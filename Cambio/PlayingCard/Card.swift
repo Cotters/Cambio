@@ -1,12 +1,19 @@
 import SwiftUI
 
-struct Card: Identifiable, Hashable, CustomStringConvertible {
+final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
+  
   let id = UUID()
   let rank: Rank
   let suit: Suit
-  var isFaceUp = false
+  @Published var isFaceUp: Bool
   
-  mutating func flip() {
+  init(rank: Rank, suit: Suit, isFaceUp: Bool = false) {
+      self.rank = rank
+      self.suit = suit
+      self.isFaceUp = isFaceUp
+    }
+  
+  func flip() {
     isFaceUp.toggle()
   }
 
@@ -24,6 +31,10 @@ struct Card: Identifiable, Hashable, CustomStringConvertible {
   var description: String {
     let faceUpText = isFaceUp ? "FaceUp" : "FaceDown"
     return "\(rank.rawValue) of \(suit) (\(faceUpText))"
+  }
+  
+  static func == (lhs: Card, rhs: Card) -> Bool {
+    lhs.id == rhs.id
   }
 }
 
