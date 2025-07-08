@@ -3,17 +3,10 @@ import SwiftUI
 struct FlippableCard: View {
   @ObservedObject var card: Card
   let canFlip: Bool
-  let beginsFaceUp: Bool
-  let onTap: (() -> Void)?
   
-//  @State private var isFaceUp: Bool
-  
-  init(card: Card, canFlip: Bool = true, beginsFaceUp: Bool = false, onTap: (() -> Void)? = nil) {
+  init(card: Card, canFlip: Bool = true) {
     self.card = card
     self.canFlip = canFlip
-    self.beginsFaceUp = beginsFaceUp
-//    self.isFaceUp = beginsFaceUp
-    self.onTap = onTap
   }
   
   var body: some View {
@@ -35,7 +28,7 @@ struct FlippableCard: View {
 
 #Preview {
   let card = Card(rank: .ace, suit: .spades)
-  FlippableCard(card: card, beginsFaceUp: false)
+  FlippableCard(card: card)
     .frame(height: 180)
     .onTapGesture {
       card.flip()

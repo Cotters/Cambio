@@ -8,8 +8,8 @@ struct DeckView: View {
   var body: some View {
     ZStack {
       ForEach(deck, id: \.id) { card in
-        FlippableCard(card: card, canFlip: false, beginsFaceUp: card.isFaceUp)
-//          .matchedGeometryEffect(id: card.id, in: namespace)
+        FlippableCard(card: card, canFlip: false)
+          .matchedGeometryEffect(id: card.id, in: namespace)
 //          .zIndex(Double(deck.count))
           .onTapGesture(perform: onTap)
       }

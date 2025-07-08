@@ -68,24 +68,51 @@ final class GameEngine: ObservableObject {
   
   func onCardSelected(_ card: Card) {
     guard let currentPlayersHand = hands[currentPlayer] else { return }
-    if (currentPlayersHand.contains(where: { $0.id == card.id })) {
+    if (currentPlayersHand.contains(card)) {
       guard let pileCard = pile.last else { return }
-      if card.rank == pileCard.rank {
-        print("Match!")
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-          print("Removing card...")
-          guard let currentPlayer = self?.currentPlayer else { return }
-          self?.hands[currentPlayer]?.removeAll(where: { $0 == card })
-          self?.currentPlayer = (currentPlayer == .north) ? .south : .north
-          self?.flipCardOntoPile()
-        })
-      } else {
-        print("No match!")
-        self.currentPlayer = (currentPlayer == .north) ? .south : .north
-        self.flipCardOntoPile()
-      }
+      card.flip()
+      checkMove(card, against: pileCard)
     } else {
       print("Not your go!!")
     }
+  }
+  
+  private func checkMove(_ card: Card, against pileCard: Card) {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+      if card.rank == pileCard.rank {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: { [weak self] in
+          self?.handleMatch(card)
+        })
+      } else {
+        card.flip()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+          self?.handleIncorrectMatch(card)
+        })
+      }
+    })
+  }
+  
+  private func handleMatch(_ card: Card) {
+    removeCardFromCurrentPlayer(card)
+    switchPlayer()
+    flipCardOntoPile()
+  }
+  
+  private func handleIncorrectMatch(_ card: Card) {
+    drawCardForCurrentPlayer()
+    switchPlayer()
+    flipCardOntoPile()
+  }
+  
+  private func removeCard(_ card: Card, from player: Player) {
+    hands[player]?.removeAll(where: { $0 == card })
+  }
+  
+  private func removeCardFromCurrentPlayer(_ card: Card) {
+    hands[currentPlayer]?.removeAll(where: { $0 == card })
+  }
+  
+  private func switchPlayer() {
+    self.currentPlayer = (currentPlayer == .north) ? .south : .north
   }
 }
