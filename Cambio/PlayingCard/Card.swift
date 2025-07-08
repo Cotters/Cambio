@@ -1,6 +1,7 @@
 import SwiftUI
 
-struct Card: Hashable, CustomStringConvertible {
+struct Card: Identifiable, Hashable, CustomStringConvertible {
+  let id = UUID()
   let rank: Rank
   let suit: Suit
 

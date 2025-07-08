@@ -1,25 +1,27 @@
 import SwiftUI
 
 struct DeckView: View {
-  let count: Int
+  let namespace: Namespace.ID
+  let deck: [Card]
+  let onTap: () -> Void
+  
+  @State private var scale: CGFloat = 1.0
 
   var body: some View {
-    VStack {
-      ZStack {
-        ForEach(0..<min(count, 5), id: \.self) { index in
-          Image("card_back")
-            .resizable()
-            .frame(width: DECK_CARD_WIDTH, height: DECK_CARD_HEIGHT)
-            .aspectRatio(2/3, contentMode: .fill)
-            .scaledToFit()
-            .clipShape(.buttonBorder)
-            .shadow(color: .black.opacity(0.2), radius: 4)
-            .edgesIgnoringSafeArea(.all)
-        }
+    ZStack {
+      ForEach(deck, id: \.id) { card in
+        Image("card_back")
+          .resizable()
+          .frame(width: DECK_CARD_WIDTH, height: DECK_CARD_HEIGHT)
+          .aspectRatio(2/3, contentMode: .fill)
+          .scaledToFit()
+          .cornerRadius(12, antialiased: true)
+          .shadow(color: .green.opacity(0.5), radius: 0.45)
+          .matchedGeometryEffect(id: card.id, in: namespace)
+          .zIndex(Double(deck.count))
+          .onTapGesture(perform: onTap)
       }
-      .accessibilityLabel("\(count) cards left in deck")
     }
-    Text("\(count) cards remaining")
-      .font(.callout)
+    .accessibilityLabel("\(deck.count) cards left in deck")
   }
 }

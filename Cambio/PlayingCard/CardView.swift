@@ -11,7 +11,8 @@ struct CardView: View {
 
       GeometryReader { geo in
         let cSize = geo.size
-        let cornerSpacing = cSize.height * 0.05
+        let cornerSpacingX = cSize.height * 0.05
+        let cornerSpacingY = cSize.height * 0.025
         let rankTextSize = cSize.height * 0.16
         let suitImageSize = cSize.height * 0.14
         
@@ -24,16 +25,16 @@ struct CardView: View {
             .frame(height: suitImageSize)
         }
           .foregroundColor(card.suit.colour())
-          .padding(cornerSpacing)
+          .padding(EdgeInsets(top: cornerSpacingY, leading: cornerSpacingX, bottom: 0, trailing: cornerSpacingX))
 
         // Top‑left corner
         rankSuitStack
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
         // Bottom‑right corner (rotated 180°)
         rankSuitStack
-        .rotationEffect(.degrees(180))
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+          .rotationEffect(.degrees(180))
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
       }
     }
     .aspectRatio(2/3, contentMode: .fit)
@@ -47,7 +48,7 @@ struct CardView: View {
       .onTapGesture {
         print("Ace of Spades!")
       }
-    CardView(card: Card(rank: .ten, suit: .hearts))
+    CardView(card: Card(rank: .seven, suit: .hearts))
       .frame(width: 180)
   }
   .padding()

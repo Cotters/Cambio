@@ -11,31 +11,50 @@ final class GameEngine: ObservableObject {
     self.deck = Card.fullDeck.shuffled()
     self.hands = [:]
     self.currentPlayer = .south
-    dealInitialHands()
+//    dealInitialHands()
   }
 
-  private func dealInitialHands() {
-    for player in Player.allCases {
-      draw(for: player, count: handSize)
+  func dealInitialHands() {
+    Task {
+      for player in Player.allCases {
+        for _ in 0..<handSize {
+          try? await Task.sleep(for: .milliseconds(50))
+            draw(for: player)
+        }
+      }
     }
   }
+  
+  func addCardToPlayersHand(_ card: Card) {
+    hands[currentPlayer]?.append(card)
+  }
+  
+  func drawCardForCurrentPlayer() {
+    guard let currentPlayersHand = hands[currentPlayer],
+      currentPlayersHand.count < handSize,
+      let card = getTopCardFromDeck() else { return }
+    hands[currentPlayer]?.append(card)
+  }
+  
+  private func getTopCardFromDeck() -> Card? {
+    return deck.popLast()
+  }
 
-  private func draw(for player: Player, count: Int = 1) {
+  func draw(for player: Player, count: Int = 1) {
     guard deck.count >= count else { return }
     var hand = hands[player] ?? []
+    guard hand.count < handSize else { return }
     hand.append(contentsOf: deck.prefix(count))
     deck.removeFirst(count)
     hands[player] = hand
   }
   
   func drawCardsForCurrentPlayer(amount: Int = 1) {
-    guard hands[currentPlayer]!.count < handSize else { return }
     draw(for: currentPlayer, count: amount)
   }
   
   func onCardSelected(_ card: Card) {
     print(card)
     hands[currentPlayer]?.removeAll(where: { $0 == card })
-    currentPlayer = (currentPlayer == .north) ? .south : .north
   }
 }
