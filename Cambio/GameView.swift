@@ -44,18 +44,15 @@ struct GameView: View {
     }
     .padding()
     .onAppear {
-      dealInitialCardsAnimated()
-      DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-        withAnimation(.spring) {
-          flipAllCards()
-          DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: {
-            flipAllCards()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-              engine.flipCardOntoPile()
-            })
-          })
-        }
-      })
+      Task {
+        dealInitialCardsAnimated()
+        try? await Task.sleep(for: .milliseconds((50 * 8) * 2)) // Wait for cards to be dealt
+        flipAllCards()
+        try? await Task.sleep(for: .milliseconds(1500)) // Show cards for 1.5s.
+        flipAllCards()
+        try? await Task.sleep(for: .milliseconds(500)) // Briefly pause before starting the pile.
+        engine.flipCardOntoPile()
+      }
     }
     .background(Color.blue.opacity(0.3))
   }
@@ -83,9 +80,9 @@ struct GameView: View {
   private func flipAllCards() {
     Task {
       for player in Player.allCases {
-          try? await Task.sleep(for: .milliseconds(50))
-          withAnimation(.spring()) {
-            engine.flipAllCards(for: player)
+        try? await Task.sleep(for: .milliseconds(0))
+        withAnimation(.spring()) {
+          engine.flipAllCards(for: player)
         }
       }
     }
