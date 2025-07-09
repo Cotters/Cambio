@@ -1,20 +1,5 @@
 import SwiftUI
 
-struct CardView: View {
-  let card: Card
-
-  var body: some View {
-    if (card.isFaceUp) {
-      CardFront(card: card)
-    } else {
-      CardBack(card: card)
-//        .scaledToFit()
-//        .frame(height: HAND_CARD_HEIGHT)
-//        .cornerRadius(12, antialiased: true)
-    }
-  }
-}
-
 struct CardFront: View {
   let card: Card
   
@@ -22,7 +7,6 @@ struct CardFront: View {
     ZStack {
       RoundedRectangle(cornerRadius: 12, style: .continuous)
         .fill(.white)
-//        .shadow(radius: 4)
       
       GeometryReader { geo in
         let cSize = geo.size
@@ -40,7 +24,14 @@ struct CardFront: View {
             .frame(height: suitImageSize)
         }
           .foregroundColor(card.suit.colour())
-          .padding(EdgeInsets(top: cornerSpacingY, leading: cornerSpacingX, bottom: 0, trailing: cornerSpacingX))
+          .padding(
+            EdgeInsets(
+              top: cornerSpacingY,
+              leading: cornerSpacingX,
+              bottom: 0,
+              trailing: cornerSpacingX
+            )
+          )
         
         // Top‑left corner
         rankSuitStack
@@ -55,6 +46,7 @@ struct CardFront: View {
     .aspectRatio(2/3, contentMode: .fit)
   }
 }
+
 struct CardBack: View {
   let card: Card
   
@@ -70,23 +62,29 @@ struct CardBack: View {
 #Preview {
   VStack {
     HStack {
-      CardView(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
+      CardFront(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
         .frame(width: 120)
-      CardView(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
+        .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
+      CardBack(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
         .frame(width: 120)
+        .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
     }
     .padding()
     HStack(spacing: 10) {
-      CardView(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
+      CardFront(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
         .frame(width: 90)
-      CardView(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
+        .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
+      CardBack(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
         .frame(width: 90)
-      CardView(card: Card(rank: .ace, suit: .spades, isFaceUp: false))
+        .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
+      CardFront(card: Card(rank: .ace, suit: .spades, isFaceUp: false))
         .frame(width: 90)
-      CardView(card: Card(rank: .seven, suit: .hearts, isFaceUp: true))
+        .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
+      CardBack(card: Card(rank: .seven, suit: .hearts, isFaceUp: true))
         .frame(width: 90)
+        .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
     }
     .padding()
-    .background(Color.green.opacity(0.75))
+    .background(Color.green.opacity(0.6))
   }
 }

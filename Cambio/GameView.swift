@@ -1,63 +1,77 @@
 import SwiftUI
 
 struct GameView: View {
-  @Namespace private var dealNS // Any views that share this animate together. Used for Deck -> Hand animation.
-  @StateObject private var engine = GameEngine(handSize: 4)
+  @Namespace private var cardNamespace // Any views that share this animate together. Used for animating cards around.
+  @StateObject private var gameEngine = GameEngine(handSize: 4)
 
   var body: some View {
     VStack {
-      if let hand = engine.hands[.north] {
-        PlayerHand(namespace: dealNS, cards: hand) { card in
-          engine.onCardSelected(card)
-        }
-      }
+      PlayerHand(
+        namespace: cardNamespace,
+        cards: gameEngine.hands[.north] ?? [],
+        onCardSelected: gameEngine.onCardSelected
+      )
+      .animation(.easeInOut, value: gameEngine.hands[.north])
       
       Spacer()
       
       VStack {
-        HStack {
-          DeckView(namespace: dealNS, deck: engine.deck)
+        HStack(spacing: 50) {
+          AnimatedRealisticDeckView(namespace: cardNamespace, deck: gameEngine.deck)
             .frame(height: HAND_CARD_HEIGHT)
-            .onTapGesture(perform: dealOneCard)
+            .onTapGesture(perform: onDeckTapped)
 
-          DeckView(namespace: dealNS, deck: engine.pile)
+          AnimatedRealisticDeckView(namespace: cardNamespace, deck: gameEngine.pile)
             .frame(height: HAND_CARD_HEIGHT)
-            .animation(.easeInOut(duration: 0.4), value: engine.pile)
+            .animation(.easeInOut(duration: 0.4), value: gameEngine.pile)
         }
         .zIndex(200)
         .padding()
 
-        Text("\(engine.deck.count) cards remaining")
-          .font(.callout)
+        Text("\(gameEngine.deck.count) cards remaining")
+          .font(.title3)
+        
+        Button(action: gameEngine.skipTurn) {
+          Text("Skip Turn")
+        }
+        .padding()
+        .foregroundStyle(.white)
+        .font(.system(size: 21, weight: .bold, design: .monospaced))
+        .background(
+          RoundedRectangle(cornerRadius: 12)
+            .fill(.blue.opacity(0.5))
+        )
       }
       
       Spacer()
       
-      if let hand = engine.hands[.south] {
-        PlayerHand(namespace: dealNS, cards: hand) { card in
-          engine.onCardSelected(card)
-        }
-      }
+      PlayerHand(
+        namespace: cardNamespace,
+        cards: gameEngine.hands[.south] ?? [],
+        onCardSelected: gameEngine.onCardSelected
+      )
+      .animation(.easeInOut(duration: 0.4), value: gameEngine.hands[.south])
     }
     .padding()
     .frame(width: UIScreen.main.bounds.width)
     .onAppear {
       Task {
         dealInitialCardsAnimated()
-        try? await Task.sleep(for: .milliseconds((50 * 8) * 2)) // Wait for cards to be dealt
+        try? await Task.sleep(for: .milliseconds((150 * 8) * 2)) // Wait for cards to be dealt
         flipAllCards()
         try? await Task.sleep(for: .milliseconds(1500)) // Show cards for 1.5s.
         flipAllCards()
-        try? await Task.sleep(for: .milliseconds(500)) // Briefly pause before starting the pile.
-        engine.flipCardOntoPile()
+        try? await Task.sleep(for: .milliseconds(800)) // Briefly pause before starting the pile.
+        gameEngine.flipCardOntoPile()
       }
     }
+    .zIndex(-10)
     .background(Color.blue.opacity(0.3))
   }
   
-  private func dealOneCard() {
+  private func onDeckTapped() {
     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-      engine.drawCardForCurrentPlayer()
+      gameEngine.drawCardForCurrentPlayer()
     }
   }
   
@@ -65,10 +79,10 @@ struct GameView: View {
   private func dealInitialCardsAnimated() {
     Task {
       for player in Player.allCases {
-        for _ in 0..<engine.handSize {
-          try? await Task.sleep(for: .milliseconds(50))
+        for _ in 0..<gameEngine.handSize {
+          try? await Task.sleep(for: .milliseconds(150))
           withAnimation(.spring()) {
-            engine.draw(for: player)
+            gameEngine.draw(for: player)
           }
         }
       }
@@ -76,12 +90,9 @@ struct GameView: View {
   }
   
   private func flipAllCards() {
-    Task {
-      for player in Player.allCases {
-        try? await Task.sleep(for: .milliseconds(0))
-        withAnimation(.spring()) {
-          engine.flipAllCards(for: player)
-        }
+    for player in Player.allCases {
+      withAnimation(.spring()) {
+        gameEngine.flipAllCards(for: player)
       }
     }
   }

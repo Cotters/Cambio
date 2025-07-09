@@ -5,6 +5,7 @@ final class GameEngine: ObservableObject {
   @Published private(set) var pile: [Card] = []
   @Published private(set) var hands: [Player: [Card]] = [:]
   @Published private(set) var currentPlayer: Player = .south
+  
   let handSize: Int
 
   init(handSize: Int = HAND_SIZE) {
@@ -57,7 +58,8 @@ final class GameEngine: ObservableObject {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
       topCard.flip()
     }
-    print(pile.suffix(3))
+    if (pile.count > 1) { return }
+    print("North hand: \(hands[.north] ?? [])\nSouth hand: \(hands[.south] ?? [])\n")
   }
   
   func onCardSelected(_ card: Card) {
@@ -65,37 +67,48 @@ final class GameEngine: ObservableObject {
     if (currentPlayersHand.contains(card)) {
       guard let pileCard = pile.last else { return }
       card.flip()
-      checkMove(card, against: pileCard)
+      // Check the move after a delay to allow flip animation
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        self?.checkMove(card, against: pileCard)
+      }
     } else {
       print("Not your go!!")
     }
   }
   
+  func skipTurn() {
+    switchPlayer()
+  }
+  
   private func checkMove(_ card: Card, against pileCard: Card) {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-      if card.rank == pileCard.rank {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: { [weak self] in
-          self?.handleMatch(card)
-        })
-      } else {
-        card.flip()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
-          self?.handleIncorrectMatch(card)
-        })
+    if card.rank == pileCard.rank {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+        self?.handleMatch(card)
       }
-    })
+    } else {
+      card.flip()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        self?.handleIncorrectMatch(card)
+      }
+    }
   }
   
   private func handleMatch(_ card: Card) {
-    removeCardFromCurrentPlayer(card)
-    switchPlayer()
-    flipCardOntoPile()
+    pile.append(card)
+    
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in // Waiting for animation to finish
+      self?.removeCardFromCurrentPlayer(card)
+      self?.switchPlayer()
+      self?.flipCardOntoPile()
+    }
   }
   
   private func handleIncorrectMatch(_ card: Card) {
     drawCardForCurrentPlayer()
-    switchPlayer()
-    flipCardOntoPile()
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+      self?.switchPlayer()
+      self?.flipCardOntoPile()
+    }
   }
   
   private func removeCard(_ card: Card, from player: Player) {

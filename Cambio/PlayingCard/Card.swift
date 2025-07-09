@@ -26,11 +26,9 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
     }
     return cards
   }
-  
-  // Create a function which describes the card when print(card):
+
   var description: String {
-    let faceUpText = isFaceUp ? "FaceUp" : "FaceDown"
-    return "\(rank.rawValue) of \(suit) (\(faceUpText))"
+    return "\(rank.rawValue)\(suit.asEmoji)"
   }
   
   static func == (lhs: Card, rhs: Card) -> Bool {
@@ -46,6 +44,19 @@ enum Suit: String, CaseIterable {
   
   func colour() -> Color {
     self == .spades || self == .clubs ? .black : .red
+  }
+  
+  var asEmoji: String {
+    switch self {
+    case .clubs:
+        return "♣️"
+    case .hearts:
+      return  "♥️"
+    case .diamonds:
+      return  "♦️"
+    case .spades:
+      return  "♠️"
+    }
   }
 }
 

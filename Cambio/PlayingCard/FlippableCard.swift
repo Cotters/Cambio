@@ -11,17 +11,22 @@ struct FlippableCard: View {
   
   var body: some View {
     ZStack {
-      CardFront(card: card)
-        .opacity(card.isFaceUp ? 1 : 0)
+      if (card.isFaceUp) { // TODO: Trying to fix opacity issue (when moving card)
+        CardFront(card: card )
+      }
+//        .opacity(card.isFaceUp ? 1 : 0)
       
       // Pre-rotated so it reads correctly after the outer spin.
-      CardBack(card: card)
-        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-        .opacity(card.isFaceUp ? 0 : 1)
+      if (!card.isFaceUp) {
+        CardBack(card: card)
+          .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+      }
+//        .opacity(card.isFaceUp ? 0 : 1)
     }
     // Outer rotation: 0° when face-up, 180° when face-down.
     .rotation3DEffect(.degrees(card.isFaceUp ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-    .animation(.easeInOut(duration: 0.4), value: card.isFaceUp)
+    .animation(.easeInOut, value: card.isFaceUp)
+//    .animation(.easeInOut(duration: 0.4), value: card.isFaceUp)
   }
 }
 
