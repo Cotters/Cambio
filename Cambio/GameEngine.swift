@@ -7,7 +7,7 @@ final class GameEngine: ObservableObject {
   @Published private(set) var currentPlayer: Player = .south
   let handSize: Int
 
-  init(handSize: Int = 4) {
+  init(handSize: Int = HAND_SIZE) {
     self.handSize = handSize
   }
 
@@ -53,8 +53,10 @@ final class GameEngine: ObservableObject {
   
   func flipCardOntoPile() {
     guard let topCard = deck.popLast() else { return }
-    let newCard = Card(rank: topCard.rank, suit: topCard.suit, isFaceUp: true)
-    pile.append(newCard)
+    pile.append(topCard)
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+      topCard.flip()
+    }
     print(pile.suffix(3))
   }
   

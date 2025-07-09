@@ -6,10 +6,11 @@ struct DeckView: View {
 
   var body: some View {
     ZStack {
-      ForEach(deck, id: \.id) { card in
+      ForEach(Array(deck.enumerated()), id: \.element.id) { index, card in
         FlippableCard(card: card, canFlip: false)
           .matchedGeometryEffect(id: card.id, in: namespace)
-//          .zIndex(Double(deck.count))
+          .frame(height: HAND_CARD_HEIGHT)
+          .zIndex(Double(index))
       }
     }
 //    .zIndex(100)

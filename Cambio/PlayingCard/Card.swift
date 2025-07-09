@@ -5,7 +5,7 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   let id = UUID()
   let rank: Rank
   let suit: Suit
-  @Published var isFaceUp: Bool
+  @Published private(set) var isFaceUp: Bool
   
   init(rank: Rank, suit: Suit, isFaceUp: Bool = false) {
       self.rank = rank

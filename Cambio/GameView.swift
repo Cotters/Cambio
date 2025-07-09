@@ -8,9 +8,7 @@ struct GameView: View {
     VStack {
       if let hand = engine.hands[.north] {
         PlayerHand(namespace: dealNS, cards: hand) { card in
-          withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-            engine.onCardSelected(card)
-          }
+          engine.onCardSelected(card)
         }
       }
       
@@ -21,9 +19,9 @@ struct GameView: View {
           DeckView(namespace: dealNS, deck: engine.deck)
             .frame(height: HAND_CARD_HEIGHT)
             .onTapGesture(perform: dealOneCard)
+
           DeckView(namespace: dealNS, deck: engine.pile)
             .frame(height: HAND_CARD_HEIGHT)
-            .transition(.slide)
             .animation(.easeInOut(duration: 0.4), value: engine.pile)
         }
         .zIndex(200)
@@ -37,13 +35,12 @@ struct GameView: View {
       
       if let hand = engine.hands[.south] {
         PlayerHand(namespace: dealNS, cards: hand) { card in
-          withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-            engine.onCardSelected(card)
-          }
+          engine.onCardSelected(card)
         }
       }
     }
     .padding()
+    .frame(width: UIScreen.main.bounds.width)
     .onAppear {
       Task {
         dealInitialCardsAnimated()
