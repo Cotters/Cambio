@@ -18,9 +18,10 @@ struct GameView: View {
       
       VStack {
         HStack {
-          DeckView(namespace: dealNS, deck: engine.deck, onTap: dealOneCard)
+          DeckView(namespace: dealNS, deck: engine.deck)
             .frame(height: HAND_CARD_HEIGHT)
-          DeckView(namespace: dealNS, deck: engine.pile, onTap: {})
+            .onTapGesture(perform: dealOneCard)
+          DeckView(namespace: dealNS, deck: engine.pile)
             .frame(height: HAND_CARD_HEIGHT)
             .transition(.slide)
             .animation(.easeInOut(duration: 0.4), value: engine.pile)

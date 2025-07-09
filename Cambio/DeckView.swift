@@ -3,7 +3,6 @@ import SwiftUI
 struct DeckView: View {
   let namespace: Namespace.ID
   let deck: [Card]
-  let onTap: () -> Void
 
   var body: some View {
     ZStack {
@@ -11,7 +10,6 @@ struct DeckView: View {
         FlippableCard(card: card, canFlip: false)
           .matchedGeometryEffect(id: card.id, in: namespace)
 //          .zIndex(Double(deck.count))
-          .onTapGesture(perform: onTap)
       }
     }
 //    .zIndex(100)

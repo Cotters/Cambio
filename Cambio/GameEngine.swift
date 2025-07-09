@@ -1,18 +1,14 @@
 import SwiftUI
 
 final class GameEngine: ObservableObject {
-  @Published private(set) var deck: [Card]
+  @Published private(set) var deck: [Card] = Card.fullDeck.shuffled()
   @Published private(set) var pile: [Card] = []
-  @Published private(set) var hands: [Player: [Card]]
-  @Published private(set) var currentPlayer: Player
+  @Published private(set) var hands: [Player: [Card]] = [:]
+  @Published private(set) var currentPlayer: Player = .south
   let handSize: Int
 
   init(handSize: Int = 4) {
     self.handSize = handSize
-    self.deck = Card.fullDeck.shuffled()
-    self.hands = [:]
-    self.currentPlayer = .south
-//    dealInitialHands()
   }
 
   func dealInitialHands() {
@@ -50,13 +46,9 @@ final class GameEngine: ObservableObject {
     hands[player] = hand
   }
   
-  func drawCardsForCurrentPlayer(amount: Int = 1) {
-    draw(for: currentPlayer, count: amount)
-  }
-  
   func flipAllCards(for player: Player) {
     guard let hand = hands[player] else { return }
-    hand.forEach { $0.flip() }
+    for card in hand { card.flip() }
   }
   
   func flipCardOntoPile() {
