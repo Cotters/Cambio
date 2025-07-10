@@ -64,10 +64,6 @@ struct CardBack: View {
             endPoint: .bottomTrailing
           )
         )
-      
-      // Clipped diagonal pattern background
-      RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
-        .fill(Color.clear)
         .overlay(
           Canvas { context, size in
             let width = size.width

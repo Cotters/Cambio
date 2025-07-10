@@ -179,7 +179,7 @@ final class GameEngine: ObservableObject {
   }
   
   private func setGameOverState() {
-//    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in // Give time for cards to settle?
+//    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in // TODO: Give time for cards to settle?
       flipAllCards(for: .north)
       flipAllCards(for: .south)
       gameState = .gameOver(hands: hands)
