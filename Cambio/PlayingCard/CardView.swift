@@ -1,11 +1,13 @@
 import SwiftUI
 
+let cardCornerRadius: CGFloat = 12
+
 struct CardFront: View {
   let card: Card
   
   var body: some View {
     ZStack {
-      RoundedRectangle(cornerRadius: 12, style: .continuous)
+      RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
         .fill(.white)
         .stroke(Color.gray, lineWidth: 0.2)
       
@@ -49,16 +51,56 @@ struct CardFront: View {
 }
 
 struct CardBack: View {
-  let card: Card
-  
   var body: some View {
-    Image("card_back")
-      .resizable()
-      .aspectRatio(2/3, contentMode: .fit)
-      .cornerRadius(12, antialiased: true)
+    ZStack {
+      RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
+        .fill(
+          LinearGradient(
+            gradient: Gradient(colors: [
+              Color.indigo,
+              Color.mint
+            ]),
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+          )
+        )
+      
+      // Clipped diagonal pattern background
+      RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous)
+        .fill(Color.clear)
+        .overlay(
+          Canvas { context, size in
+            let width = size.width
+            let height = size.height
+            
+            // Diagonal line pattern
+            for x in stride(from: -20, to: width + 20, by: 10) {
+              for y in stride(from: -20, to: height + 20, by: 10) {
+                let path = Path { p in
+                  p.move(to: CGPoint(x: x, y: y))
+                  p.addLine(to: CGPoint(x: x + 8, y: y + 8))
+                }
+                
+                context.stroke(
+                  path,
+                  with: .color(.white.opacity(0.15)),
+                  lineWidth: 1
+                )
+              }
+            }
+          }
+        )
+        .clipShape(RoundedRectangle(cornerRadius: cardCornerRadius, style: .continuous))
+      
+      // Centered joker symbol
+      Text("🃟")
+        .font(.system(size: 90))
+        .foregroundStyle(Color.white.opacity(1.0))
+        .padding(.bottom, 10)
+    }
+    .aspectRatio(2/3, contentMode: .fit)
   }
 }
-
 
 #Preview {
   VStack {
@@ -66,7 +108,7 @@ struct CardBack: View {
       CardFront(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
         .frame(width: 120)
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
-      CardBack(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
+      CardBack()
         .frame(width: 120)
         .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
     }
@@ -75,13 +117,13 @@ struct CardBack: View {
       CardFront(card: Card(rank: .ace, suit: .spades, isFaceUp: true))
         .frame(width: 90)
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
-      CardBack(card: Card(rank: .seven, suit: .hearts, isFaceUp: false))
+      CardBack()
         .frame(width: 90)
         .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
       CardFront(card: Card(rank: .ace, suit: .spades, isFaceUp: false))
         .frame(width: 90)
         .shadow(color: .black.opacity(0.2), radius: 3, x: 0, y: 1)
-      CardBack(card: Card(rank: .seven, suit: .hearts, isFaceUp: true))
+      CardBack()
         .frame(width: 90)
         .shadow(color: .black.opacity(0.2), radius: 1, x: 0, y: 1)
     }

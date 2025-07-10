@@ -1,4 +1,3 @@
-//isGameOver
 import SwiftUI
 
 struct ContentView: View {
@@ -8,7 +7,7 @@ struct ContentView: View {
   var body: some View {
     switch gameEngine.gameState {
     case .start:
-      WelcomeView(onStartTapped: gameEngine.restartGame)
+      MainMenu(onStartTapped: gameEngine.restartGame)
     default:
       GameView(gameEngine: gameEngine)
     }

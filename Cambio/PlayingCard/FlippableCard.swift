@@ -18,14 +18,13 @@ struct FlippableCard: View {
         .opacity(card.isFaceUp ? 1 : 0)
       
       // Pre-rotated so it reads correctly after the outer spin.
-        CardBack(card: card)
+        CardBack()
           .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
           .opacity(card.isFaceUp ? 0 : 1)
     }
     // Outer rotation: 0° when face-up, 180° when face-down.
     .rotation3DEffect(.degrees(card.isFaceUp ? 0 : 180), axis: (x: 0, y: 1, z: 0))
     .animation(.easeInOut, value: card.isFaceUp)
-//    .animation(.easeInOut(duration: 0.4), value: card.isFaceUp)
   }
 }
 

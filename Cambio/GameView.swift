@@ -3,7 +3,6 @@ import SwiftUI
 struct GameView: View {
   @Namespace private var cardNamespace
   @StateObject var gameEngine: GameEngine
-  @State private var showingTurnIndicator = false
   
   var body: some View {
     GeometryReader { geometry in
@@ -109,34 +108,9 @@ struct GameView: View {
           .padding(.horizontal, 16)
           .padding(.bottom, 16) // Add bottom padding for visibility
         }
-        
-        // Turn Indicator Overlay
-        if showingTurnIndicator {
-          TurnIndicatorOverlay(currentPlayer: gameEngine.currentPlayer)
-            .transition(.asymmetric(
-              insertion: .scale.combined(with: .opacity),
-              removal: .opacity
-            ))
-            .zIndex(1000)
-        }
       }
     }
     .onAppear { beginGame() }
-    .onChange(of: gameEngine.currentPlayer) { _, newPlayer in
-      showTurnIndicator(for: newPlayer)
-    }
-  }
-  
-  private func showTurnIndicator(for player: Player) {
-    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-      showingTurnIndicator = true
-    }
-    
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-      withAnimation(.easeOut(duration: 0.3)) {
-        showingTurnIndicator = false
-      }
-    }
   }
   
   private func beginGame() {
@@ -307,7 +281,7 @@ struct GameCenterArea: View {
             Image(systemName: "person.fill")
               .font(.system(size: 16, weight: .medium))
               .foregroundColor(.green)
-            Text("\(gameEngine.currentPlayer == .north ? "North" : "Your") Turn")
+            Text("\(gameEngine.currentPlayer == .north ? "North's" : "South's") Turn")
               .font(.system(size: 16, weight: .medium, design: .rounded))
               .foregroundColor(.primary)
           }
@@ -366,7 +340,7 @@ struct ViewingCardDisplay: View {
   var body: some View {
     FlippableCard(card: card, canFlip: false)
       .matchedGeometryEffect(id: card.id, in: namespace)
-      .frame(height: HAND_CARD_HEIGHT * 0.8)
+      .frame(height: HAND_CARD_HEIGHT * 0.9)
       .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
       .animation(.easeInOut(duration: 0.4), value: card)
   }
@@ -375,29 +349,6 @@ struct ViewingCardDisplay: View {
 #Preview {
   @Previewable @Namespace var namespace
   ViewingCardDisplay(card: Card(rank: .ace, suit: .hearts, isFaceUp: true), namespace: namespace)
-}
-
-struct TurnIndicatorOverlay: View {
-  let currentPlayer: Player
-  
-  var body: some View {
-    VStack(spacing: 16) {
-      Image(systemName: "arrow.turn.up.right")
-        .font(.system(size: 40, weight: .bold))
-        .foregroundColor(.white)
-      
-      Text("\(currentPlayer == .north ? "North's" : "Your") Turn")
-        .font(.system(size: 24, weight: .bold, design: .rounded))
-        .foregroundColor(.white)
-    }
-    .padding(.horizontal, 40)
-    .padding(.vertical, 24)
-    .background(
-      RoundedRectangle(cornerRadius: 20)
-        .fill(currentPlayer == .north ? Color.red.opacity(0.9) : Color.blue.opacity(0.9))
-        .shadow(color: .black.opacity(0.3), radius: 12, x: 0, y: 6)
-    )
-  }
 }
 
 #Preview {

@@ -1,64 +1,15 @@
 import SwiftUI
 
-struct WelcomeView: View {
-  let onStartTapped: () -> Void
+struct RulesView: View {
   
   var body: some View {
     ScrollView {
       VStack(spacing: 16) {
-        // Header Section
-        VStack(spacing: 8) {
-          Text("♠️ CAMBIO ♣️")
-            .font(.system(size: 36, weight: .black, design: .rounded))
-            .foregroundStyle(
-              LinearGradient(
-                gradient: Gradient(colors: [.blue, .purple]),
-                startPoint: .leading,
-                endPoint: .trailing
-              )
-            )
-          
-          Text("Card Game")
-            .font(.system(size: 20, weight: .medium, design: .rounded))
-            .foregroundColor(.secondary)
-            .tracking(2)
-        }
-        .padding(.top, 20)
-        
-        // Quick Start Button
-        Button(action: onStartTapped) {
-          HStack(spacing: 12) {
-            Image(systemName: "play.fill")
-              .font(.system(size: 18, weight: .bold))
-            Text("Quick Start")
-              .font(.system(size: 18, weight: .bold, design: .rounded))
-          }
-          .foregroundColor(.white)
-          .padding(.horizontal, 32)
-          .padding(.vertical, 16)
-          .background(
-            LinearGradient(
-              gradient: Gradient(colors: [.green, .mint]),
-              startPoint: .leading,
-              endPoint: .trailing
-            )
-          )
-          .clipShape(Capsule())
-          .shadow(color: .green.opacity(0.3), radius: 6, x: 0, y: 3)
-        }
-        
-        // Rules Section
         VStack(spacing: 16) {
-          // Section Header
-          HStack {
-            Image(systemName: "book.fill")
-              .font(.title2)
-              .foregroundColor(.blue)
-            Text("Game Rules")
-              .font(.system(size: 24, weight: .bold, design: .rounded))
-              .foregroundColor(.primary)
-            Spacer()
-          }
+          Text("Game Rules")
+            .font(.system(size: 24, weight: .bold, design: .rounded))
+            .foregroundColor(.primary)
+            .padding(.top, 20)
           
           // Objective Card
           RuleCard(
@@ -141,29 +92,6 @@ struct WelcomeView: View {
           )
         }
         .padding(.horizontal, 0)
-        
-        // Main Play Button
-        Button(action: onStartTapped) {
-          HStack(spacing: 12) {
-            Image(systemName: "gamecontroller.fill")
-              .font(.system(size: 20, weight: .bold))
-            Text("Start Playing Cambio")
-              .font(.system(size: 20, weight: .bold, design: .rounded))
-          }
-          .foregroundColor(.white)
-          .padding(.horizontal, 40)
-          .padding(.vertical, 18)
-          .background(
-            LinearGradient(
-              gradient: Gradient(colors: [.blue, .purple]),
-              startPoint: .leading,
-              endPoint: .trailing
-            )
-          )
-          .clipShape(Capsule())
-          .shadow(color: .blue.opacity(0.3), radius: 8, x: 0, y: 4)
-        }
-        .padding(.bottom, 0)
       }
       .padding(.horizontal, 20)
     }
@@ -177,6 +105,7 @@ struct WelcomeView: View {
         endPoint: .bottom
       )
     )
+    .scrollIndicators(.hidden) // Hides the scroll indicators
   }
 }
 
@@ -259,5 +188,5 @@ struct ScoreRow: View {
 }
 
 #Preview {
-  WelcomeView(onStartTapped: {})
+  RulesView()
 }
