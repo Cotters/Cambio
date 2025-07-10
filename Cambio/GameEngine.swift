@@ -8,6 +8,10 @@ final class GameEngine: ObservableObject {
   
   @Published private(set) var viewingCard: Card? = nil
   
+  private var currentPlayersHand: [Card]? {
+    return hands[currentPlayer]
+  }
+  
   let handSize: Int
 
   init(handSize: Int = HAND_SIZE) {
@@ -39,8 +43,8 @@ final class GameEngine: ObservableObject {
   private func getTopCardFromDeck() -> Card? {
     return deck.popLast()
   }
-
-  func draw(for player: Player, count: Int = 1) {
+  
+  func draw(_ count: Int = 1, for player: Player) {
     guard deck.count >= count else { return }
     var hand = hands[player] ?? []
     guard hand.count < handSize else { return }
@@ -50,18 +54,17 @@ final class GameEngine: ObservableObject {
   }
   
   func onDeckTapped() {
-    
+    drawCardForCurrentPlayer()
   }
   
   func onPileTapped() {
     if let card = viewingCard {
       pile.append(card)
       viewingCard = nil
-    } else if let takenCard = pile.last {
-      takenCard.flip()
-      addCardToPlayersHand(takenCard)
+      switchPlayer()
+    } else if (pile.count > 0) {
+      viewingCard = pile.popLast()
     }
-    switchPlayer()
   }
   
   func flipAllCards(for player: Player) {
@@ -84,19 +87,25 @@ final class GameEngine: ObservableObject {
     if let viewingCard = self.viewingCard, let indexOfSelectedCard = currentPlayersHand.firstIndex(of: selectedCard) {
       selectedCard.flip()
       pile.append(selectedCard)
-      viewingCard.flip()
       hands[currentPlayer]?.remove(at: indexOfSelectedCard)
+      viewingCard.flip()
+      hands[currentPlayer]?.insert(viewingCard, at: indexOfSelectedCard)
       self.viewingCard = nil
       switchPlayer()
-    } else if (currentPlayersHand.contains(selectedCard)) { // TODO: Change this to allow any user's hand as anyone can match at any time!
+    } else if (hands[.north]?.contains(selectedCard) == true) { // TODO: Refactoring
       guard let pileCard = pile.last else { return }
       selectedCard.flip()
       // Check the move after a delay to allow flip animation
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-        self?.checkMove(selectedCard, against: pileCard)
+        self?.checkMove(selectedCard, against: pileCard, for: .north)
       }
-    } else {
-      print("Not your go!!")
+    } else if (hands[.south]?.contains(selectedCard) == true) {
+      guard let pileCard = pile.last else { return }
+      selectedCard.flip()
+      // Check the move after a delay to allow flip animation
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        self?.checkMove(selectedCard, against: pileCard, for: .south)
+      }
     }
   }
   
@@ -104,34 +113,29 @@ final class GameEngine: ObservableObject {
     switchPlayer()
   }
   
-  private func checkMove(_ card: Card, against pileCard: Card) {
+  private func checkMove(_ card: Card, against pileCard: Card, for player: Player) {
     if card.rank == pileCard.rank {
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-        self?.handleMatch(card)
+        self?.handleMatch(card, for: player)
       }
     } else {
       card.flip()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-        self?.handleIncorrectMatch(card)
+        self?.handleIncorrectMatch(card, for: player)
       }
     }
   }
   
-  private func handleMatch(_ card: Card) {
+  private func handleMatch(_ card: Card, for player: Player) {
     pile.append(card)
     
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in // Waiting for animation to finish
-      self?.removeCardFromCurrentPlayer(card)
-      self?.switchPlayer()
+      self?.remove(card, from: player)
     }
   }
   
-  private func handleIncorrectMatch(_ card: Card) {
-    drawCardForCurrentPlayer()
-    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-      self?.switchPlayer()
-      self?.flipCardOntoPile()
-    }
+  private func handleIncorrectMatch(_ card: Card, for player: Player) {
+    draw(1, for: player)
   }
   
   private func removeCard(_ card: Card, from player: Player) {
@@ -140,6 +144,10 @@ final class GameEngine: ObservableObject {
   
   private func removeCardFromCurrentPlayer(_ card: Card) {
     hands[currentPlayer]?.removeAll(where: { $0 == card })
+  }
+  
+  private func remove(_ card: Card, from player: Player) {
+    hands[player]?.removeAll(where: { $0 == card })
   }
   
   private func switchPlayer() {

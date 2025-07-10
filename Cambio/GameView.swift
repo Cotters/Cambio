@@ -14,11 +14,13 @@ struct GameView: View {
         )
         .animation(.easeInOut, value: gameEngine.hands[.north])
         
-        if let card = gameEngine.viewingCard, gameEngine.currentPlayer == .north {
-          FlippableCard(card: card, canFlip: false)
-            .matchedGeometryEffect(id: card.id, in: cardNamespace)
-            .frame(height: HAND_CARD_HEIGHT)
-            .animation(.easeInOut(duration: 0.4), value: card)
+        if (gameEngine.currentPlayer == .north) {
+          if let card = gameEngine.viewingCard {
+            FlippableCard(card: card, canFlip: false)
+              .matchedGeometryEffect(id: card.id, in: cardNamespace)
+              .frame(height: HAND_CARD_HEIGHT)
+              .animation(.easeInOut(duration: 0.4), value: card)
+          }
         }
       }
       
@@ -40,6 +42,17 @@ struct GameView: View {
 
         Text("\(gameEngine.deck.count) cards remaining")
           .font(.title3)
+        
+//        Button(action: gameEngine.skipTurn) {
+//          Text("Cambio!")
+//        }
+//        .padding(5)
+//        .foregroundStyle(.white)
+//        .font(.system(size: 18, weight: .bold, design: .monospaced))
+//        .background(
+//          RoundedRectangle(cornerRadius: 12)
+//            .fill(.blue.opacity(0.5))
+//        )
       }
       
       Spacer()
@@ -85,7 +98,7 @@ struct GameView: View {
   
   private func onDeckTapped() {
     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-      gameEngine.drawCardForCurrentPlayer()
+      gameEngine.onDeckTapped()
     }
   }
   
