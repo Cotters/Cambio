@@ -7,6 +7,7 @@ struct CardFront: View {
     ZStack {
       RoundedRectangle(cornerRadius: 12, style: .continuous)
         .fill(.white)
+        .stroke(Color.gray, lineWidth: 0.2)
       
       GeometryReader { geo in
         let cSize = geo.size

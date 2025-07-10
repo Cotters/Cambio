@@ -16,16 +16,16 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   static let specialCardRanks: Set<Rank> = [.ace, .king] // TODO: Add Joker.
   
   var isHolographic: Bool {
-    return Card.specialCardRanks.contains(rank)
+    return points <= 0
   }
   
   var points: Int { // TODO: Add Joker as -2.
     if (rank == .ace) {
-      return 0
+      return ACE_SCORE
     } else if (rank == .king && suit.isRed()) {
-      return -1
+      return RED_KING_SCORE
     } else if (Rank.faceCards.contains(rank)) {
-      return 10
+      return FACE_CARD_SCORE
     } else if let rankAsScore = Int(rank.rawValue) {
       return rankAsScore
     } else {

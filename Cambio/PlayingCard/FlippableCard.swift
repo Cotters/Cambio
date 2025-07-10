@@ -12,7 +12,7 @@ struct FlippableCard: View {
   
   var body: some View {
     ZStack {
-        CardFront(card: card )
+        CardFront(card: card)
         .stickerEffect(card.isHolographic)
         .stickerMotionEffect(.rotationEffect)
         .opacity(card.isFaceUp ? 1 : 0)
@@ -50,6 +50,7 @@ extension StickerMotionEffect where Self == RotationMotionEffect {
 #Preview {
   let card = Card(rank: .ace, suit: .spades, isFaceUp: true)
   let card2 = Card(rank: .jack, suit: .spades)
+  let card3 = Card(rank: .king, suit: .hearts, isFaceUp: true)
   VStack(spacing: 20) {
     FlippableCard(card: card)
       .frame(height: 180)
@@ -57,6 +58,11 @@ extension StickerMotionEffect where Self == RotationMotionEffect {
         card.flip()
       }
     FlippableCard(card: card2)
+      .frame(height: 180)
+      .onTapGesture {
+        card2.flip()
+      }
+    FlippableCard(card: card3)
       .frame(height: 180)
       .onTapGesture {
         card2.flip()
