@@ -4,15 +4,12 @@
 > 
 > Meaning: change or exchange
 
-This is a fun little card game I played whilst travelling in South America.
-
 ## About
 
-Want to try making a card game so I decided to code this game I learnt while travelling South America.
+I wanted to try making a card game so I decided to code this fun little game I learnt while travelling South America.
+There is a Rules page in the app detailing how to play, but basically it's a matching game where you need to remember what cards you have.
 
-There is a Rules page in app detailing how to play.
-
-*Build using SwiftUI.* (Not built using TDD but would make a great kata!)
+*Build using SwiftUI.* (Not built using TDD, but would make a great kata!)
 
 Plenty of refactoring to do as I threw this together v quickly.
 
