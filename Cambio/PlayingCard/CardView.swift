@@ -91,8 +91,8 @@ struct CardBack: View {
       // Centered joker symbol
       Text("🃟")
         .font(.system(size: 90))
-        .foregroundStyle(Color.white.opacity(1.0))
-        .padding(.bottom, 10)
+        .foregroundStyle(Color.white.opacity(0.8))
+        .padding(.bottom, 15)
     }
     .aspectRatio(2/3, contentMode: .fit)
   }

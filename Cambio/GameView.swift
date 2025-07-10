@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GameView: View {
   @Namespace private var cardNamespace
+  @Namespace private var currentPlayerNamespace
   @StateObject var gameEngine: GameEngine
   
   var body: some View {
@@ -22,11 +23,14 @@ struct GameView: View {
         VStack(spacing: 0) {
           // North Player Section
           VStack(spacing: 8) {
-            PlayerSectionHeader(isCurrentPlayer: gameEngine.currentPlayer == .north)
+            PlayerSectionHeader(
+              namespace: currentPlayerNamespace,
+              isCurrentPlayer: gameEngine.currentPlayer == .north
+            )
             
             // North viewing card - positioned above hand
             ZStack {
-              EnhancedPlayerHand(
+              PlayerHand(
                 namespace: cardNamespace,
                 cards: gameEngine.hands[.north] ?? [],
                 onCardSelected: gameEngine.onCardSelected,
@@ -77,9 +81,8 @@ struct GameView: View {
           
           // South Player Section (Player)
           VStack(spacing: 8) {
-            // South viewing card and hand in fixed container
             ZStack {
-              EnhancedPlayerHand(
+              PlayerHand(
                 namespace: cardNamespace,
                 cards: gameEngine.hands[.south] ?? [],
                 onCardSelected: onPlayerCardTapped,
@@ -96,7 +99,10 @@ struct GameView: View {
             }
             .frame(height: HAND_CARD_HEIGHT + 40) // Fixed height to prevent movement
             
-            PlayerSectionHeader(isCurrentPlayer: gameEngine.currentPlayer == .south)
+            PlayerSectionHeader(
+              namespace: currentPlayerNamespace,
+              isCurrentPlayer: gameEngine.currentPlayer == .south
+            )
           }
           .padding(.horizontal, 16)
           .padding(.vertical, 12)
@@ -171,6 +177,7 @@ struct GameView: View {
 }
 
 struct PlayerSectionHeader: View {
+  let namespace: Namespace.ID
   let isCurrentPlayer: Bool
   
   var body: some View {
@@ -183,42 +190,12 @@ struct PlayerSectionHeader: View {
       }
       Spacer()
     }
+    .matchedGeometryEffect(id: isCurrentPlayer, in: namespace)
+    .animation(.easeInOut(duration: 0.5), value: isCurrentPlayer)
+    .transition(.slide) // TODO: Why does this only slide one-way?
     .frame(height: 8)
     .padding(.vertical, 2)
-  }
-}
-
-struct EnhancedPlayerHand: View {
-  let namespace: Namespace.ID
-  let cards: [Card]
-  let onCardSelected: (Card) -> Void
-  let isOpponent: Bool
-  
-  var body: some View {
-    HStack(spacing: 8) {
-      ForEach(cards.prefix(cards.count), id: \.id) { card in
-        FlippableCard(card: card)
-          .matchedGeometryEffect(id: card.id, in: namespace)
-          .onTapGesture {
-            let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-            impactFeedback.impactOccurred()
-            onCardSelected(card)
-          }
-          .frame(height: HAND_CARD_HEIGHT)
-          .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-      }
-    }
-    .frame(height: HAND_CARD_HEIGHT)
-    .padding(.horizontal, 16)
-    .padding(.vertical, 12)
-    .background(
-      RoundedRectangle(cornerRadius: 16)
-        .fill(isOpponent ? Color.red.opacity(0.1) : Color.blue.opacity(0.1))
-        .overlay(
-          RoundedRectangle(cornerRadius: 16)
-            .stroke(isOpponent ? Color.red.opacity(0.2) : Color.blue.opacity(0.2), lineWidth: 1)
-        )
-    )
+    .zIndex(100)
   }
 }
 
