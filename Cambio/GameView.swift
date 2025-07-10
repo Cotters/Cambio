@@ -6,12 +6,21 @@ struct GameView: View {
 
   var body: some View {
     VStack {
-      PlayerHand(
-        namespace: cardNamespace,
-        cards: gameEngine.hands[.north] ?? [],
-        onCardSelected: gameEngine.onCardSelected
-      )
-      .animation(.easeInOut, value: gameEngine.hands[.north])
+      VStack {
+        PlayerHand(
+          namespace: cardNamespace,
+          cards: gameEngine.hands[.north] ?? [],
+          onCardSelected: gameEngine.onCardSelected
+        )
+        .animation(.easeInOut, value: gameEngine.hands[.north])
+        
+        if let card = gameEngine.viewingCard, gameEngine.currentPlayer == .north {
+          FlippableCard(card: card, canFlip: false)
+            .matchedGeometryEffect(id: card.id, in: cardNamespace)
+            .frame(height: HAND_CARD_HEIGHT)
+            .animation(.easeInOut(duration: 0.4), value: card)
+        }
+      }
       
       Spacer()
       
@@ -24,33 +33,32 @@ struct GameView: View {
           AnimatedRealisticDeckView(namespace: cardNamespace, deck: gameEngine.pile)
             .frame(height: HAND_CARD_HEIGHT)
             .animation(.easeInOut(duration: 0.4), value: gameEngine.pile)
+            .onTapGesture(perform: onPileTapped)
         }
         .zIndex(200)
         .padding()
 
         Text("\(gameEngine.deck.count) cards remaining")
           .font(.title3)
-        
-        Button(action: gameEngine.skipTurn) {
-          Text("Skip Turn")
-        }
-        .padding()
-        .foregroundStyle(.white)
-        .font(.system(size: 21, weight: .bold, design: .monospaced))
-        .background(
-          RoundedRectangle(cornerRadius: 12)
-            .fill(.blue.opacity(0.5))
-        )
       }
       
       Spacer()
       
-      PlayerHand(
-        namespace: cardNamespace,
-        cards: gameEngine.hands[.south] ?? [],
-        onCardSelected: gameEngine.onCardSelected
-      )
-      .animation(.easeInOut(duration: 0.4), value: gameEngine.hands[.south])
+      VStack {
+        if let card = gameEngine.viewingCard, gameEngine.currentPlayer == .south {
+          FlippableCard(card: card, canFlip: false)
+            .matchedGeometryEffect(id: card.id, in: cardNamespace)
+            .frame(height: HAND_CARD_HEIGHT)
+            .animation(.easeInOut(duration: 0.4), value: card)
+        }
+        
+        PlayerHand(
+          namespace: cardNamespace,
+          cards: gameEngine.hands[.south] ?? [],
+          onCardSelected: onPlayerCardTapped
+        )
+        .animation(.easeInOut(duration: 0.4), value: gameEngine.hands[.south])
+      }
     }
     .padding()
     .frame(width: UIScreen.main.bounds.width)
@@ -69,9 +77,21 @@ struct GameView: View {
     .background(Color.blue.opacity(0.3))
   }
   
+  private func onPlayerCardTapped(_ card: Card) {
+    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+      gameEngine.onCardSelected(card)
+    }
+  }
+  
   private func onDeckTapped() {
     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
       gameEngine.drawCardForCurrentPlayer()
+    }
+  }
+  
+  private func onPileTapped() {
+    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+      gameEngine.onPileTapped()
     }
   }
   

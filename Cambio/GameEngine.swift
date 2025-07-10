@@ -6,6 +6,8 @@ final class GameEngine: ObservableObject {
   @Published private(set) var hands: [Player: [Card]] = [:]
   @Published private(set) var currentPlayer: Player = .south
   
+  @Published private(set) var viewingCard: Card? = nil
+  
   let handSize: Int
 
   init(handSize: Int = HAND_SIZE) {
@@ -28,10 +30,10 @@ final class GameEngine: ObservableObject {
   }
   
   func drawCardForCurrentPlayer() {
-    guard let currentPlayersHand = hands[currentPlayer],
-      currentPlayersHand.count < handSize,
-      let card = getTopCardFromDeck() else { return }
-    hands[currentPlayer]?.append(card)
+    guard viewingCard == nil else { return }
+    let topCard = getTopCardFromDeck()
+    topCard?.flip()
+    viewingCard = topCard
   }
   
   private func getTopCardFromDeck() -> Card? {
@@ -45,6 +47,21 @@ final class GameEngine: ObservableObject {
     hand.append(contentsOf: deck.prefix(count))
     deck.removeFirst(count)
     hands[player] = hand
+  }
+  
+  func onDeckTapped() {
+    
+  }
+  
+  func onPileTapped() {
+    if let card = viewingCard {
+      pile.append(card)
+      viewingCard = nil
+    } else if let takenCard = pile.last {
+      takenCard.flip()
+      addCardToPlayersHand(takenCard)
+    }
+    switchPlayer()
   }
   
   func flipAllCards(for player: Player) {
@@ -62,14 +79,21 @@ final class GameEngine: ObservableObject {
     print("North hand: \(hands[.north] ?? [])\nSouth hand: \(hands[.south] ?? [])\n")
   }
   
-  func onCardSelected(_ card: Card) {
+  func onCardSelected(_ selectedCard: Card) {
     guard let currentPlayersHand = hands[currentPlayer] else { return }
-    if (currentPlayersHand.contains(card)) {
+    if let viewingCard = self.viewingCard, let indexOfSelectedCard = currentPlayersHand.firstIndex(of: selectedCard) {
+      selectedCard.flip()
+      pile.append(selectedCard)
+      viewingCard.flip()
+      hands[currentPlayer]?.remove(at: indexOfSelectedCard)
+      self.viewingCard = nil
+      switchPlayer()
+    } else if (currentPlayersHand.contains(selectedCard)) { // TODO: Change this to allow any user's hand as anyone can match at any time!
       guard let pileCard = pile.last else { return }
-      card.flip()
+      selectedCard.flip()
       // Check the move after a delay to allow flip animation
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-        self?.checkMove(card, against: pileCard)
+        self?.checkMove(selectedCard, against: pileCard)
       }
     } else {
       print("Not your go!!")
@@ -99,7 +123,6 @@ final class GameEngine: ObservableObject {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) { [weak self] in // Waiting for animation to finish
       self?.removeCardFromCurrentPlayer(card)
       self?.switchPlayer()
-      self?.flipCardOntoPile()
     }
   }
   
