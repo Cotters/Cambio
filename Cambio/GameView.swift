@@ -43,16 +43,16 @@ struct GameView: View {
         Text("\(gameEngine.deck.count) cards remaining")
           .font(.title3)
         
-//        Button(action: gameEngine.skipTurn) {
-//          Text("Cambio!")
-//        }
-//        .padding(5)
-//        .foregroundStyle(.white)
-//        .font(.system(size: 18, weight: .bold, design: .monospaced))
-//        .background(
-//          RoundedRectangle(cornerRadius: 12)
-//            .fill(.blue.opacity(0.5))
-//        )
+        Button(action: gameEngine.onCambioTapped) {
+          Text("Cambio!")
+        }
+        .padding(5)
+        .foregroundStyle(.white)
+        .font(.system(size: 18, weight: .bold, design: .monospaced))
+        .background(
+          RoundedRectangle(cornerRadius: 12)
+            .fill(.blue.opacity(0.5))
+        )
       }
       
       Spacer()

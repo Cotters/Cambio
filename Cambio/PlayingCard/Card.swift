@@ -19,6 +19,21 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
     return Card.specialCardRanks.contains(rank)
   }
   
+  var points: Int { // TODO: Add Joker as -2.
+    if (rank == .ace) {
+      return 0
+    } else if (rank == .king && suit.isRed()) {
+      return -1
+    } else if (Rank.faceCards.contains(rank)) {
+      return 10
+    } else if let rankAsScore = Int(rank.rawValue) {
+      return rankAsScore
+    } else {
+      print("Failed to calculate points for \(self)")
+      return 0
+    }
+  }
+  
   func flip() {
     isFaceUp.toggle()
   }
@@ -49,7 +64,11 @@ enum Suit: String, CaseIterable {
   case clubs = "suit.club.fill"
   
   func colour() -> Color {
-    self == .spades || self == .clubs ? .black : .red
+    self.isRed() ? .red :  .black
+  }
+  
+  func isRed() -> Bool {
+    self == .hearts || self == .diamonds
   }
   
   var asEmoji: String {
@@ -81,4 +100,6 @@ enum Rank: String, CaseIterable {
   case queen = "Q"
   case king = "K"
   case ace = "A"
+  
+  static var faceCards: [Rank] { [.jack, .queen, .king] }
 }

@@ -8,6 +8,9 @@ final class GameEngine: ObservableObject {
   
   @Published private(set) var viewingCard: Card? = nil
   
+  private var isLastTurn: Bool = false
+  private var isGameOver: Bool = false
+  
   private var currentPlayersHand: [Card]? {
     return hands[currentPlayer]
   }
@@ -19,6 +22,7 @@ final class GameEngine: ObservableObject {
   }
 
   func dealInitialHands() {
+    guard !isGameOver else { return }
     Task {
       for player in Player.allCases {
         for _ in 0..<handSize {
@@ -30,10 +34,12 @@ final class GameEngine: ObservableObject {
   }
   
   func addCardToPlayersHand(_ card: Card) {
+    guard !isGameOver else { return }
     hands[currentPlayer]?.append(card)
   }
   
   func drawCardForCurrentPlayer() {
+    guard !isGameOver else { return }
     guard viewingCard == nil else { return }
     let topCard = getTopCardFromDeck()
     topCard?.flip()
@@ -45,6 +51,7 @@ final class GameEngine: ObservableObject {
   }
   
   func draw(_ count: Int = 1, for player: Player) {
+    guard !isGameOver else { return }
     guard deck.count >= count else { return }
     var hand = hands[player] ?? []
     guard hand.count < handSize else { return }
@@ -54,10 +61,12 @@ final class GameEngine: ObservableObject {
   }
   
   func onDeckTapped() {
+    guard !isGameOver else { return }
     drawCardForCurrentPlayer()
   }
   
   func onPileTapped() {
+    guard !isGameOver else { return }
     if let card = viewingCard {
       pile.append(card)
       viewingCard = nil
@@ -68,11 +77,13 @@ final class GameEngine: ObservableObject {
   }
   
   func flipAllCards(for player: Player) {
+    guard !isGameOver else { return }
     guard let hand = hands[player] else { return }
     for card in hand { card.flip() }
   }
   
   func flipCardOntoPile() {
+    guard !isGameOver else { return }
     guard let topCard = deck.popLast() else { return }
     pile.append(topCard)
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -83,6 +94,7 @@ final class GameEngine: ObservableObject {
   }
   
   func onCardSelected(_ selectedCard: Card) {
+    guard !isGameOver else { return }
     guard let currentPlayersHand = hands[currentPlayer] else { return }
     if let viewingCard = self.viewingCard, let indexOfSelectedCard = currentPlayersHand.firstIndex(of: selectedCard) {
       selectedCard.flip()
@@ -107,10 +119,6 @@ final class GameEngine: ObservableObject {
         self?.checkMove(selectedCard, against: pileCard, for: .south)
       }
     }
-  }
-  
-  func skipTurn() {
-    switchPlayer()
   }
   
   private func checkMove(_ card: Card, against pileCard: Card, for player: Player) {
@@ -151,6 +159,38 @@ final class GameEngine: ObservableObject {
   }
   
   private func switchPlayer() {
-    self.currentPlayer = (currentPlayer == .north) ? .south : .north
+    if (isLastTurn) {
+      flipAllCards(for: .north)
+      flipAllCards(for: .south)
+      isGameOver = true
+      scoreGame()
+    } else {
+      self.currentPlayer = (currentPlayer == .north) ? .south : .north
+    }
+  }
+  
+  func onCambioTapped() {
+    guard !isGameOver else { return }
+    switchPlayer()
+    isLastTurn = true
+  }
+  
+  private func scoreGame() {
+    let northHand = hands[.north] ?? []
+    let northScore = northHand.getScore()
+
+    let southHand = hands[.south] ?? []
+    let southScore = southHand.getScore()
+    
+    print("Score\n=====\nNorth has \(northScore) points\nSouth has \(southScore) points\n")
+    print("\(northScore < southScore ? "North" : "South") wins!")
+  }
+}
+
+fileprivate extension Array where Element == Card {
+  func getScore() -> Int {
+    return self.reduce(0) { (partialResult, card) in
+      partialResult + card.points
+    }
   }
 }
