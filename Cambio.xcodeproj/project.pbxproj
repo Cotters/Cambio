@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CFADDF182E1FEF2700378692 /* Sticker in Frameworks */ = {isa = PBXBuildFile; productRef = CFADDF172E1FEF2700378692 /* Sticker */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		CF9024482E1D4BF60023024D /* Cambio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cambio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFADDF182E1FEF2700378692 /* Sticker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +70,7 @@
 			);
 			name = Cambio;
 			packageProductDependencies = (
+				CFADDF172E1FEF2700378692 /* Sticker */,
 			);
 			productName = Cambio;
 			productReference = CF9024482E1D4BF60023024D /* Cambio.app */;
@@ -94,6 +100,9 @@
 			);
 			mainGroup = CF90243F2E1D4BF60023024D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CFADDF162E1FEF2700378692 /* XCRemoteSwiftPackageReference "Sticker" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CF9024492E1D4BF60023024D /* Products */;
 			projectDirPath = "";
@@ -324,6 +333,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CFADDF162E1FEF2700378692 /* XCRemoteSwiftPackageReference "Sticker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/bpisano/Sticker";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CFADDF172E1FEF2700378692 /* Sticker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CFADDF162E1FEF2700378692 /* XCRemoteSwiftPackageReference "Sticker" */;
+			productName = Sticker;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CF9024402E1D4BF60023024D /* Project object */;
 }

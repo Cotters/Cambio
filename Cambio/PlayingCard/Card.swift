@@ -8,10 +8,16 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   @Published private(set) var isFaceUp: Bool
   
   init(rank: Rank, suit: Suit, isFaceUp: Bool = false) {
-      self.rank = rank
-      self.suit = suit
-      self.isFaceUp = isFaceUp
-    }
+    self.rank = rank
+    self.suit = suit
+    self.isFaceUp = isFaceUp
+  }
+  
+  static let specialCardRanks: Set<Rank> = [.ace, .king] // TODO: Add Joker.
+  
+  var isHolographic: Bool {
+    return Card.specialCardRanks.contains(rank)
+  }
   
   func flip() {
     isFaceUp.toggle()
@@ -60,6 +66,7 @@ enum Suit: String, CaseIterable {
   }
 }
 
+// TODO: Add a Joker! Should skip the Suit pairing. 1 black; 1 red.
 enum Rank: String, CaseIterable {
   case two = "2"
   case three = "3"

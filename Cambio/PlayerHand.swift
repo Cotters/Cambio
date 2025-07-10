@@ -33,15 +33,20 @@ struct PlayerHand: View {
 
 #Preview {
   @Previewable @Namespace var namespace
+  let deck = Card.fullDeck
+  var faceUpDeck: [Card] {
+    deck.forEach { $0.flip() }
+    return deck
+  }
   VStack {
     PlayerHand(
       namespace: namespace,
-      cards: Array(Card.fullDeck.suffix(2)),
+      cards: Array(deck.suffix(2)),
       onCardSelected: { _ in },
     )
     PlayerHand(
       namespace: namespace,
-      cards: Array(Card.fullDeck.suffix(4)),
+      cards: Array(faceUpDeck.prefix(4)),
       onCardSelected: { _ in },
     )
   }
