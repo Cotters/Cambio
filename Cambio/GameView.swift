@@ -295,9 +295,6 @@ struct GameCenterArea: View {
           .clipShape(Capsule())
           .shadow(color: .orange.opacity(0.4), radius: 6, x: 0, y: 3)
         }
-        .scaleEffect(gameEngine.currentPlayer == .south ? 1.0 : 0.8)
-        .opacity(gameEngine.currentPlayer == .south ? 1.0 : 0.6)
-        .animation(.easeInOut(duration: 0.3), value: gameEngine.currentPlayer)
       }
     }
     .padding(.horizontal, 16)
@@ -321,11 +318,6 @@ struct ViewingCardDisplay: View {
       .shadow(color: .black.opacity(0.3), radius: 6, x: 0, y: 3)
       .animation(.easeInOut(duration: 0.4), value: card)
   }
-}
-
-#Preview {
-  @Previewable @Namespace var namespace
-  ViewingCardDisplay(card: Card(rank: .ace, suit: .hearts, isFaceUp: true), namespace: namespace)
 }
 
 #Preview {
