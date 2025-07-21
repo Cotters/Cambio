@@ -13,14 +13,14 @@ struct RulesView: View {
           
           // Objective Card
           RuleCard(
-            title: "🎯 Objective",
+            title: "Objective",
             content: "Have the least points possible by removing cards or keeping low-scoring cards.",
             color: .orange
           )
           
           // Setup Card
           RuleCard(
-            title: "⚙️ Setup",
+            title: "Setup",
             content: """
                         • Each player gets \(HAND_SIZE) cards
                         • Draw pile and discard pile in the middle
@@ -30,14 +30,15 @@ struct RulesView: View {
           
           // Gameplay Card
           RuleCard(
-            title: "🎮 Gameplay",
+            title: "Gameplay",
             content: """
                         1. Draw from draw pile or discard pile
                         2. Keep or discard the drawn card
                         3. Tap your cards to match with discard pile
-                        4. Correct match = discard card
-                        5. Wrong match = gain extra card (max \(HAND_SIZE))
-                        6. Call "Cambio" when you have least points
+                        4. Correctly matched cards stay in the discard pile
+                        5. Wrongly matched cards are returned to your hand and you gain an extra card (max \(HAND_SIZE))
+                        6. Tap "Cambio" when you think you have least points
+                        7. When "Cambio" is called, the other player gets one final turn
                         """,
             color: .purple
           )
@@ -45,8 +46,6 @@ struct RulesView: View {
           // Scoring Card
           VStack(alignment: .leading, spacing: 16) {
             HStack {
-              Text("📊")
-                .font(.title2)
               Text("Scoring")
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .foregroundColor(.primary)
@@ -55,32 +54,28 @@ struct RulesView: View {
             
             VStack(spacing: 12) {
               ScoreRow(
-                icon: "👑",
                 text: "Red Kings",
                 points: "\(RED_KING_SCORE)",
                 color: .green
               )
               
               ScoreRow(
-                icon: "🃏",
                 text: "Aces",
-                points: "\(ACE_SCORE)",
+                points: "+\(ACE_SCORE)",
                 color: .blue
               )
               
               ScoreRow(
-                icon: "🎭",
                 text: "Face Cards",
                 points: "+\(FACE_CARD_SCORE)",
                 color: .red
               )
               
               ScoreRow(
-                icon: "🔢",
                 text: "Number Cards (2-10)",
                 points: "Face Value",
                 color: .orange,
-                subtitle: "Example: 4 of Spades = -4 points"
+                subtitle: "Example: 4♠ will give +4 points"
               )
             }
           }
@@ -140,14 +135,12 @@ struct RuleCard: View {
 }
 
 struct ScoreRow: View {
-  let icon: String
   let text: String
   let points: String
   let color: Color
   let subtitle: String?
   
-  init(icon: String, text: String, points: String, color: Color, subtitle: String? = nil) {
-    self.icon = icon
+  init(text: String, points: String, color: Color, subtitle: String? = nil) {
     self.text = text
     self.points = points
     self.color = color
@@ -157,9 +150,6 @@ struct ScoreRow: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       HStack {
-        Text(icon)
-          .font(.title3)
-        
         Text(text)
           .font(.system(size: 16, weight: .medium, design: .rounded))
           .foregroundColor(.primary)
@@ -181,7 +171,7 @@ struct ScoreRow: View {
         Text(subtitle)
           .font(.system(size: 13, weight: .medium, design: .rounded))
           .foregroundColor(.secondary)
-          .padding(.leading, 32)
+          .padding(.leading, 8)
       }
     }
   }
