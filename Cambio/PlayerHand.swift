@@ -37,7 +37,7 @@ struct PlayerHand: View {
 
 #Preview {
   @Previewable @Namespace var namespace
-  let deck = Card.fullDeck
+  let deck = Deck.standardWithJokers
   var faceUpDeck: [Card] {
     deck.forEach { $0.flip() }
     return deck
@@ -51,7 +51,7 @@ struct PlayerHand: View {
     )
     PlayerHand(
       namespace: namespace,
-      cards: Array(faceUpDeck.prefix(4)),
+      cards: Array(faceUpDeck.shuffled().prefix(4)),
       onCardSelected: { _ in },
       isOpponent: false
     )

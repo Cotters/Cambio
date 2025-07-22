@@ -42,16 +42,6 @@ class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
     isFaceUp.toggle()
   }
 
-  static var fullDeck: [Card] {
-    var cards: [Card] = []
-    for suit in Suit.allCases {
-      for rank in Rank.allWithoutJoker {
-        cards.append(Card(rank: rank, suit: suit))
-      }
-    }
-    return cards
-  }
-
   var description: String {
     return "\(rank.rawValue)\(suit.asEmoji)"
   }

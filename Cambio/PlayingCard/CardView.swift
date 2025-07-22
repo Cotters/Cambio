@@ -12,7 +12,7 @@ struct CardDesign {
   static let cornerSpacingXRatio: CGFloat = 0.06
   static let cornerSpacingYRatio: CGFloat = 0.04
   static let rankTextSizeRatio: CGFloat = 0.18
-  static let suitImageSizeRatio: CGFloat = 0.16
+  static let suitImageSizeRatio: CGFloat = 0.13
   static let jokerImageSizeRatio: CGFloat = 4.5
 }
 
@@ -62,22 +62,12 @@ struct JokerContent: View {
   let imageSize: CGFloat
   
   var body: some View {
-    VStack(spacing: 8) {
-      // Option 1: System symbol approach
-      jokerSymbolView
-      
-      // Option 2: Emoji approach (comment out above and uncomment below to test)
-      // jokerEmojiView
-      
-      // Option 3: Text-based approach (comment out above and uncomment below to test)
-      // jokerTextView
-    }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    jokerSymbolView
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
   
   private var jokerSymbolView: some View {
     VStack(spacing: 4) {
-      // Crown symbol for joker
       Image(systemName: "crown.fill")
         .resizable()
         .aspectRatio(contentMode: .fit)
@@ -91,34 +81,10 @@ struct JokerContent: View {
         )
       
       Text("JOKER")
-        .font(.system(size: imageSize * 0.1, weight: .black, design: .rounded))
+        .font(.system(size: imageSize * 0.15, weight: .black, design: .rounded))
+        .frame(maxWidth: .infinity)
         .foregroundColor(jokerCard.color.color)
-        .kerning(2)
-    }
-  }
-  
-  private var jokerEmojiView: some View {
-    VStack(spacing: 4) {
-      Text("🃏")
-        .font(.system(size: imageSize * 0.8))
-        .colorMultiply(jokerCard.color == .red ? .red : .primary)
-      
-      Text("JOKER")
-        .font(.system(size: imageSize * 0.2, weight: .bold))
-        .foregroundColor(jokerCard.color.color)
-    }
-  }
-  
-  private var jokerTextView: some View {
-    VStack(spacing: 8) {
-      Text("★")
-        .font(.system(size: imageSize * 0.8, weight: .black))
-        .foregroundColor(jokerCard.color.color)
-      
-      Text("JOKER")
-        .font(.system(size: imageSize * 0.25, weight: .black, design: .rounded))
-        .foregroundColor(jokerCard.color.color)
-        .kerning(1)
+        .kerning(4)
     }
   }
 }
