@@ -275,35 +275,37 @@ struct GameCenterArea: View {
         }
         
         // Cambio Button
-        Button(action: gameEngine.onCambioTapped) {
-          HStack(spacing: 12) {
-            Image(systemName: "star.fill")
-              .font(.system(size: 18, weight: .bold))
-            Text("Call Cambio!")
-              .font(.system(size: 18, weight: .bold, design: .rounded))
-          }
-          .foregroundColor(.white)
-          .padding(.horizontal, 32)
-          .padding(.vertical, 14)
-          .background(
-            LinearGradient(
-              gradient: Gradient(colors: [.orange, .red]),
-              startPoint: .leading,
-              endPoint: .trailing
+        if (gameEngine.gameState != .cambioCalled) {
+          Button(action: gameEngine.onCambioTapped) {
+            HStack(spacing: 12) {
+              Image(systemName: "star.fill")
+                .font(.system(size: 18, weight: .bold))
+              Text("Call Cambio!")
+                .font(.system(size: 18, weight: .bold, design: .rounded))
+            }
+            .foregroundColor(.white)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 14)
+            .background(
+              LinearGradient(
+                gradient: Gradient(colors: [.orange, .red]),
+                startPoint: .leading,
+                endPoint: .trailing
+              )
             )
-          )
-          .clipShape(Capsule())
-          .shadow(color: .orange.opacity(0.4), radius: 6, x: 0, y: 3)
+            .clipShape(Capsule())
+            .shadow(color: .orange.opacity(0.4), radius: 6, x: 0, y: 3)
+          }
         }
       }
+      .padding(.horizontal, 16)
+      .padding(.vertical, 20)
+      .background(
+        RoundedRectangle(cornerRadius: 16)
+          .fill(Color(.secondarySystemBackground).opacity(0.8))
+          .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
+      )
     }
-    .padding(.horizontal, 16)
-    .padding(.vertical, 20)
-    .background(
-      RoundedRectangle(cornerRadius: 16)
-        .fill(Color(.secondarySystemBackground).opacity(0.8))
-        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
-    )
   }
 }
 
@@ -321,6 +323,6 @@ struct ViewingCardDisplay: View {
 }
 
 #Preview {
-  let engine = GameEngine(handSize: 4)
+  let engine = GameEngine()
   GameView(gameEngine: engine)
 }

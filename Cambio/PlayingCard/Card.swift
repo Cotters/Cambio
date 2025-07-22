@@ -1,6 +1,6 @@
 import SwiftUI
 
-final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
+class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
   
   let id = UUID()
   let rank: Rank
@@ -17,6 +17,10 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   
   var isHolographic: Bool {
     return points <= 0
+  }
+  
+  var textColour: Color {
+    return suit.color()
   }
   
   var points: Int { // TODO: Add Joker as -2.
@@ -41,7 +45,7 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   static var fullDeck: [Card] {
     var cards: [Card] = []
     for suit in Suit.allCases {
-      for rank in Rank.allCases {
+      for rank in Rank.allWithoutJoker {
         cards.append(Card(rank: rank, suit: suit))
       }
     }
@@ -57,14 +61,51 @@ final class Card: ObservableObject, Identifiable, Equatable, CustomStringConvert
   }
 }
 
+enum JokerColor: String, CaseIterable {
+  case red, black
+  
+  var color: Color {
+    switch self {
+    case .red: return .red
+    case .black: return .black
+    }
+  }
+  
+  var displayName: String {
+    return rawValue.capitalized
+  }
+}
+
+class JokerCard: Card {
+  
+  let color: JokerColor
+  
+  init(color: JokerColor) {
+    self.color = color
+    super.init(rank: .joker, suit: .spades)
+  }
+  
+  override var textColour: Color {
+    return color.color
+  }
+  
+  override var description: String {
+    return "\(color.displayName) Joker"
+  }
+  
+  override var points: Int {
+    return JOKER_SCORE
+  }
+}
+
 enum Suit: String, CaseIterable {
   case spades = "suit.spade.fill"
   case hearts = "suit.heart.fill"
   case diamonds = "suit.diamond.fill"
   case clubs = "suit.club.fill"
   
-  func colour() -> Color {
-    self.isRed() ? .red :  .black
+  func color() -> Color {
+    self.isRed() ? .red : .black
   }
   
   func isRed() -> Bool {
@@ -73,19 +114,18 @@ enum Suit: String, CaseIterable {
   
   var asEmoji: String {
     switch self {
-    case .clubs:
-        return "♣️"
-    case .hearts:
-      return  "♥️"
-    case .diamonds:
-      return  "♦️"
-    case .spades:
-      return  "♠️"
+    case .clubs: return "♣️"
+    case .hearts: return "♥️"
+    case .diamonds: return "♦️"
+    case .spades: return "♠️"
     }
+  }
+  
+  var systemImageName: String {
+    return rawValue
   }
 }
 
-// TODO: Add a Joker! Should skip the Suit pairing. 1 black; 1 red.
 enum Rank: String, CaseIterable {
   case two = "2"
   case three = "3"
@@ -100,6 +140,13 @@ enum Rank: String, CaseIterable {
   case queen = "Q"
   case king = "K"
   case ace = "A"
+  case joker = "Joker"
+  
+  static var allWithoutJoker: [Rank] = [.two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king, .ace]
   
   static var faceCards: [Rank] { [.jack, .queen, .king] }
+  
+  var displayText: String {
+    return rawValue
+  }
 }

@@ -60,6 +60,12 @@ struct RulesView: View {
               )
               
               ScoreRow(
+                text: "Jokers",
+                points: "\(JOKER_SCORE)",
+                color: .blue
+              )
+
+              ScoreRow(
                 text: "Aces",
                 points: "+\(ACE_SCORE)",
                 color: .blue

@@ -8,7 +8,7 @@ enum GameState: Equatable {
 }
 
 final class GameEngine: ObservableObject {
-  @Published private(set) var deck: [Card] = Card.fullDeck.shuffled()
+  @Published private(set) var deck: Deck = Deck.standardWithJokers.shuffled()
   @Published private(set) var pile: [Card] = []
   @Published private(set) var hands: [Player: [Card]] = [:]
   @Published private(set) var viewingCard: Card? = nil
@@ -30,8 +30,25 @@ final class GameEngine: ObservableObject {
     self.handSize = handSize
   }
   
+#if DEBUG
+  init() {
+    self.handSize = 2
+    deck = Deck.standardWithJokers.shuffled().suffix(10)
+    restartGame(deck: deck)
+  }
+#endif
+  
   func restartGame() {
-    deck = Card.fullDeck.shuffled()
+    deck = Deck.standardWithJokers.shuffled()
+    pile = []
+    hands = [:]
+    viewingCard = nil
+    currentPlayer = .south
+    gameState = .playing
+  }
+  
+  func restartGame(deck: Deck = Deck.standardWithJokers.shuffled()) {
+    self.deck = deck
     pile = []
     hands = [:]
     viewingCard = nil
@@ -50,6 +67,9 @@ final class GameEngine: ObservableObject {
     let topCard = getTopCardFromDeck()
     topCard?.flip()
     viewingCard = topCard
+    if (deck.count == 0) {
+      gameState = .cambioCalled
+    }
   }
   
   private func getTopCardFromDeck() -> Card? {
