@@ -3,6 +3,7 @@ import SwiftUI
 struct MainMenu : View {
   @State private var isPresentingRules = false
   @State private var isPresentingLeaderboard = false
+  @State private var isPresentingFeedbackForm = false
 
   let onSoloTapped: () -> Void
   let onTwoPlayerTapped: () -> Void
@@ -55,6 +56,15 @@ struct MainMenu : View {
           gradientColors: [.cyan, .blue],
           action: { isPresentingRules.toggle() },
         )
+        
+        MainMenuButton(
+          icon: "square.and.pencil",
+          text: "Feedback & Suggestions",
+          gradientColors: [.indigo, .purple],
+          action: { isPresentingFeedbackForm.toggle() },
+        )
+        
+        
       }
     }
     .sheet(isPresented: $isPresentingRules) {
@@ -62,6 +72,9 @@ struct MainMenu : View {
     }
     .sheet(isPresented: $isPresentingLeaderboard) {
       LeaderboardView()
+    }
+    .sheet(isPresented: $isPresentingFeedbackForm) {
+      FeedbackFormView()
     }
   }
 }
