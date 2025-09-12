@@ -1,6 +1,8 @@
 import SwiftUI
+import MessageUI
 
 struct FeedbackFormView: View {
+  
   enum FeedbackCategory: String, CaseIterable, Identifiable {
     case bug = "🐛 Bug Report"
     case suggestion = "💡 Suggestion"
@@ -18,7 +20,7 @@ struct FeedbackFormView: View {
   @State private var characterCount: Int = 0
   @State private var showCharacterLimitWarning = false
   @FocusState private var isTextEditorFocused: Bool
-  
+
   private let maxCharacterLimit = 800
   private let minCharacterLimit = 1
   
@@ -232,7 +234,6 @@ struct FeedbackFormView: View {
   }
 }
 
-// Custom preview with different states
 #Preview {
   FeedbackFormView()
 }

@@ -22,7 +22,7 @@ struct PlayerHand: View {
     }
     .frame(height: HAND_CARD_HEIGHT)
     .padding(.horizontal, 16)
-    .padding(.vertical, 12)
+    .padding(.vertical, 8)
     .background(
       RoundedRectangle(cornerRadius: 16)
         .fill(isOpponent ? Color.red.opacity(0.1) : Color.blue.opacity(0.1))

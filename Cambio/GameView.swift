@@ -10,20 +10,10 @@ struct GameView: View {
   var body: some View {
     GeometryReader { geometry in
       ZStack {
-        // Background
-        LinearGradient(
-          gradient: Gradient(colors: [
-            Color(.systemBackground),
-            Color.green.opacity(0.1),
-            Color.blue.opacity(0.15)
-          ]),
-          startPoint: .top,
-          endPoint: .bottom
-        )
-        .ignoresSafeArea()
+        GameBackground()
         
         VStack(spacing: 0) {
-          // North Player Section
+          // MARK: - North Player Section
           VStack(spacing: 8) {
             PlayerSectionHeader(
               namespace: currentPlayerNamespace,
@@ -60,7 +50,7 @@ struct GameView: View {
           
           Spacer()
           
-          // Center Game Area
+          // MARK: - Center Game Area
           if gameEngine.isPlaying {
             GameCenterArea(
               namespace: cardNamespace,
@@ -84,7 +74,7 @@ struct GameView: View {
           
           Spacer()
           
-          // South Player Section (Player)
+          // MARK: - South Player Section (Player)
           VStack(spacing: 8) {
             ZStack {
               PlayerHand(
@@ -126,6 +116,7 @@ struct GameView: View {
   
   private func beginGame() {
     Task {
+      gameEngine.beginPlaying()
       dealInitialCardsAnimated()
       try? await Task.sleep(for: .milliseconds((150 * 8) * 2))
       flipAllCards()
@@ -133,8 +124,6 @@ struct GameView: View {
       flipAllCards()
       try? await Task.sleep(for: .milliseconds(800))
       gameEngine.flipCardOntoPile()
-      try? await Task.sleep(for: .milliseconds(800))
-      gameEngine.beginPlaying()
     }
   }
   

@@ -1,5 +1,7 @@
 import Foundation
 
+let SUPPORT_EMAIL = "gumbo-sender0d@icloud.com"
+
 let MAIN_LEADERBOARD_ID = "MainLeaderboard"
 
 // Card Dimensions
