@@ -30,7 +30,7 @@ class BaseGameEngine: ObservableObject {
   }
   
   var canDrawCard: Bool {
-    gameState != .gameOver && viewingCard == nil
+    gameState != .gameOver
   }
   
   private var currentPlayersHand: [Card]? {
@@ -68,7 +68,7 @@ class BaseGameEngine: ObservableObject {
   }
   
   func drawViewingCardForCurrentPlayer() {
-    guard canDrawCard else { return }
+    guard canDrawCard && viewingCard == nil else { return }
     let impactFeedback = UIImpactFeedbackGenerator(style: .light)
     impactFeedback.impactOccurred()
     let topCard = getTopCardFromDeck()
@@ -138,9 +138,9 @@ class BaseGameEngine: ObservableObject {
     print("North hand: \(hands[.north] ?? [])\nSouth hand: \(hands[.south] ?? [])\n")
   }
   
-  func onCardInHandTapped(_ selectedCard: Card) {
+  func onCardInHandTapped(_ selectedCard: Card, for player: Player) {
     guard isPlaying else { return }
-    if let viewingCard = self.viewingCard {
+    if let viewingCard = self.viewingCard, player == currentPlayer {
       swapViewingCard(viewingCard, forPlayerCard: selectedCard)
       switchPlayer()
     } else {
@@ -174,6 +174,7 @@ class BaseGameEngine: ObservableObject {
     if card.rank == pileCard.rank {
       handleMatch(card, for: player)
     } else {
+      print("Wrong match, take a card!")
       card.flip()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
         self?.handleIncorrectMatch(card, for: player)
@@ -190,10 +191,14 @@ class BaseGameEngine: ObservableObject {
   }
   
   private func handleIncorrectMatch(_ card: Card, for player: Player) {
+    print("taking a card...")
     let hand = hands[player] ?? []
+    print(hand)
     if hand.count < handSize {
+      print("we have room")
       draw(1, for: player)
     } else {
+      print("adding penalty point")
       penalties[player]? += 1
     }
   }
@@ -208,6 +213,7 @@ class BaseGameEngine: ObservableObject {
   
   private func remove(_ card: Card, from player: Player) {
     hands[player]?.removeAll(where: { $0 == card })
+//    hands[player]
   }
   
   func switchPlayer() {

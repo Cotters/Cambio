@@ -25,10 +25,12 @@ struct GameView: View {
               PlayerHand(
                 namespace: cardNamespace,
                 cards: gameEngine.hands[.north] ?? [],
-                onCardSelected: gameEngine.onCardInHandTapped,
+                onCardSelected: { card in
+                  onPlayerCardTapped(card, for: .north)
+                },
                 isOpponent: true
               )
-              .animation(.easeInOut, value: gameEngine.hands[.north])
+              .animation(.easeInOut(duration: 0.4), value: gameEngine.hands[.north])
               
               if gameEngine.currentPlayer == .north, let card = gameEngine.viewingCard {
                 VStack {
@@ -80,7 +82,9 @@ struct GameView: View {
               PlayerHand(
                 namespace: cardNamespace,
                 cards: gameEngine.hands[.south] ?? [],
-                onCardSelected: onPlayerCardTapped,
+                onCardSelected: { card in
+                  onPlayerCardTapped(card, for: .south)
+                },
                 isOpponent: false
               )
               .animation(.easeInOut(duration: 0.4), value: gameEngine.hands[.south])
@@ -132,9 +136,9 @@ struct GameView: View {
     beginGame()
   }
   
-  private func onPlayerCardTapped(_ card: Card) {
+  private func onPlayerCardTapped(_ card: Card, for player: Player) {
     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-      gameEngine.onCardInHandTapped(card)
+      gameEngine.onCardInHandTapped(card, for: player)
     }
   }
   

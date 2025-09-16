@@ -47,10 +47,10 @@ final class SoloGameEngine: BaseGameEngine {
     super.onPileTapped()
   }
   
-  override func onCardInHandTapped(_ selectedCard: Card) {
+  override func onCardInHandTapped(_ selectedCard: Card, for player: Player) {
     guard isPlaying else { return }
     canDrawFromPile = false // You just discarded the top card in pile; so take-backs!
-    super.onCardInHandTapped(selectedCard)
+    super.onCardInHandTapped(selectedCard, for: .south)
   }
   
   private func handleIncorrectMatch(_ card: Card) {

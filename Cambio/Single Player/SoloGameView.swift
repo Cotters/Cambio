@@ -102,7 +102,7 @@ struct SoloGameView: View {
   
   private func onPlayerCardTapped(_ card: Card) {
     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-      gameEngine.onCardInHandTapped(card)
+      gameEngine.onCardInHandTapped(card, for: .south)
     }
   }
   
