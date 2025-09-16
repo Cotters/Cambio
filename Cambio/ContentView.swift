@@ -6,6 +6,7 @@ enum GameMode {
 
 struct ContentView: View {
   @State var gameMode: GameMode = .menu
+  @Environment(\.horizontalSizeClass) var horizontalSizeClass
   
   @StateObject private var soloGameEngine = SoloGameEngine(handSize: 8)
   @StateObject private var twoPlayerGameEngine = BaseGameEngine(handSize: 4)
@@ -24,12 +25,23 @@ struct ContentView: View {
         },
       )
     case .solo:
-      SoloGameView(
-        gameEngine: soloGameEngine,
-        onMenuTapped: {
-          gameMode = .menu
-        }
-      )
+      if horizontalSizeClass == .compact {
+        SoloGameView(
+          gameEngine: soloGameEngine,
+          onMenuTapped: {
+            gameMode = .menu
+          }
+        )
+      } else {
+        // TODO: iPad version
+        // See https://stackoverflow.com/questions/65810300/change-view-based-on-device-swiftui
+        SoloGameView(
+          gameEngine: soloGameEngine,
+          onMenuTapped: {
+            gameMode = .menu
+          }
+        )
+      }
     case .twoPlayer:
       GameView(
         gameEngine: twoPlayerGameEngine,
