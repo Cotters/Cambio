@@ -2,11 +2,5 @@ import SwiftUI
 
 enum Player: CaseIterable, Hashable {
   case north, south
-//  case east, west
+//  TODO: 4 Player with: east, west
 }
-
-//enum Player {
-//  case user
-//  case opponent
-//}
-
