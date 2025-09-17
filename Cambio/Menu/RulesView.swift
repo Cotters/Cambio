@@ -22,7 +22,8 @@ struct RulesView: View {
           RuleCard(
             title: "Setup",
             content: """
-                        • Each player gets \(HAND_SIZE) cards
+                        • Solo: You get \(SP_HAND_SIZE) cards
+                        • Two Player: Each player gets \(HAND_SIZE) cards
                         • Draw pile and discard pile in the middle
                         """,
             color: .blue
@@ -32,12 +33,12 @@ struct RulesView: View {
           RuleCard(
             title: "Gameplay",
             content: """
-                        1. Draw from draw pile or discard pile
-                        2. Keep or discard the drawn card
-                        3. Tap your cards to match with discard pile
+                        1. Tap on draw pile or discard pile to take a card
+                        2. Tap a card in your hand to swap or tap the discard pile to discard 
+                        3. Tap a card in your hand to match with discard pile (can do this multiple times)
                         4. Correctly matched cards stay in the discard pile
-                        5. Wrongly matched cards are returned to your hand and you gain an extra card
-                        6. Tap "Cambio" when you think you have least points
+                        5. Wrongly matched cards are returned to your hand and you gain an extra card or a penalty point
+                        6. Tap "Cambio" when you think you have the least points
                         7. When "Cambio" is called, the other player gets one final turn
                         """,
             color: .purple
@@ -83,6 +84,13 @@ struct RulesView: View {
                 color: .orange,
                 subtitle: "Example: 4♠ will give +4 points"
               )
+              
+              ScoreRow(
+                text: "Incorrect Matches",
+                points: "+1",
+                color: .red,
+                subtitle: "Penalty for wrongly matching cards"
+              )
             }
           }
           .padding(20)
@@ -122,7 +130,7 @@ struct RuleCard: View {
         .foregroundColor(color)
       
       Text(content)
-        .font(.system(size: 15, weight: .medium, design: .default))
+        .font(.system(size: 15, weight: .medium, design: .rounded))
         .foregroundColor(.primary)
         .fixedSize(horizontal: false, vertical: true)
     }
