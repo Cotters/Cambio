@@ -105,7 +105,7 @@ class BaseGameEngine: ObservableObject {
     if let card = viewingCard {
       pile.append(card)
       viewingCard = nil
-      switchPlayer()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.75, execute: switchPlayer)
     } else if (pile.count > 0) {
       viewingCard = pile.popLast()
     }
@@ -139,7 +139,7 @@ class BaseGameEngine: ObservableObject {
     guard isPlaying else { return }
     if let viewingCard = self.viewingCard, player == currentPlayer {
       swapViewingCard(viewingCard, forPlayerCard: selectedCard)
-      switchPlayer()
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.75, execute: switchPlayer)
     } else {
       onMatchAttepmted(selectedCard)
     }

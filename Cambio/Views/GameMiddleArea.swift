@@ -39,7 +39,7 @@ struct GameCenterArea: View {
             .foregroundColor(.orange)
         }
       }
-      .zIndex(200)
+//      .zIndex(1)
 
       // Game Info
       VStack(spacing: 16) {
@@ -94,15 +94,20 @@ struct GameCenterArea: View {
           .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
       )
     }
+    .rotationEffect(.degrees(gameEngine.currentPlayer == .north ? 180 : 0))
+    .animation(.easeInOut(duration: 0.5), value: gameEngine.currentPlayer)
   }
 }
 
 #Preview {
   @Previewable @Namespace var previewNamepsace
-  GameCenterArea(
-    namespace: previewNamepsace,
-    gameEngine: BaseGameEngine(),
-    onDeckTapped: {},
-    onPileTapped: {},
-  )
+  ZStack {
+    GameBackground()
+    GameCenterArea(
+      namespace: previewNamepsace,
+      gameEngine: BaseGameEngine(),
+      onDeckTapped: {},
+      onPileTapped: {},
+    )
+  }
 }
