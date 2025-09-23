@@ -32,15 +32,12 @@ struct SoloGameOverView: View {
 
   var body: some View {
     VStack(spacing: 20) {
-      // Game Over Title with subtle animation
       Text("GAME OVER")
         .font(.system(size: 28, weight: .bold, design: .rounded))
         .foregroundColor(.primary)
         .opacity(0.9)
 
-      // Score Display Card
       VStack(spacing: 12) {
-        // Player Score
         VStack(spacing: 4) {
           Text("YOUR SCORE")
             .font(.caption)
@@ -56,7 +53,6 @@ struct SoloGameOverView: View {
           }
         }
 
-        // Score message
         Text(scoreMessage)
           .font(.system(size: 18, weight: .semibold, design: .rounded))
           .foregroundColor(scoreColor)
@@ -79,15 +75,14 @@ struct SoloGameOverView: View {
           .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
       )
 
-      // Buttons
-      VStack(spacing: 12) {
+      HStack(spacing: 8) {
+        MenuButton(action: onMenuTapped, width: 80)
         RestartButton(action: onRestartTapped)
-        MenuButton(action: onMenuTapped)
       }
     }
-    .padding(.horizontal, 32)
+    .padding(.horizontal, 20)
     .padding(.vertical, 24)
-    .frame(maxWidth: 350)
+    .frame(maxWidth: 380)
     .background(
       RoundedRectangle(cornerRadius: 24)
         .fill(Color(.secondarySystemBackground))

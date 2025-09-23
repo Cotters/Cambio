@@ -12,6 +12,8 @@ struct SoloGameView: View {
   let gameMode: SoloGameMode
   let onMenuTapped: () -> Void
   
+  @State private var isPresentingRules = false
+  
   var body: some View {
     GeometryReader { geometry in
       ZStack {
@@ -78,14 +80,26 @@ struct SoloGameView: View {
           .padding(.horizontal, 16)
           .padding(.bottom, 16) // Add bottom padding for visibility
           
-          if gameEngine.isPlaying {
-            CambioButton(action: gameEngine.onCambioTapped)
-          } else {
-            CambioButton(action: gameEngine.onCambioTapped)
-              .hidden()
+          HStack {
+            MainMenuButton(
+              icon: "book.fill",
+              text: "Rules",
+              gradientColors: [.blue, .teal],
+              action: { isPresentingRules.toggle() },
+              width: 120,
+            )
+            if gameEngine.isPlaying {
+              CambioButton(action: gameEngine.onCambioTapped)
+            } else {
+              CambioButton(action: gameEngine.onCambioTapped)
+                .hidden()
+            }
           }
         }
       }
+    }
+    .sheet(isPresented: $isPresentingRules) {
+      RulesView()
     }
     .onAppear(perform: beginGame)
   }

@@ -5,6 +5,15 @@ struct MainMenuButton: View {
   let text: String
   let gradientColors: [Color]
   let action: () -> Void
+  let width: CGFloat
+  
+  init(icon: String, text: String, gradientColors: [Color], action: @escaping () -> Void, width: CGFloat = 160) {
+    self.icon = icon
+    self.text = text
+    self.gradientColors = gradientColors
+    self.action = action
+    self.width = width
+  }
   
   var body: some View {
     Button(action: action) {
@@ -17,7 +26,7 @@ struct MainMenuButton: View {
           .font(.system(size: 18, weight: .bold, design: .rounded))
       }
       .foregroundColor(.white)
-      .frame(width: 160)
+      .frame(width: width)
       .padding(.horizontal, 32)
       .padding(.vertical, 16)
       .background(
@@ -39,7 +48,7 @@ struct MainMenuButton: View {
       icon: "person.fill",
       text: "Solo",
       gradientColors: [.green, .mint],
-      action: {}
+      action: {},
     )
     MainMenuButton(
       icon: "person.2.fill",

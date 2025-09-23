@@ -84,7 +84,7 @@ struct GameOverView: View {
       // Buttons
       VStack(spacing: 12) {
         RestartButton(action: onRestartTapped)
-        MenuButton(action: onMenuTapped)
+        MenuButton(action: onMenuTapped, width: 120)
       }
     }
     .padding(.horizontal, 32)

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuButton: View {
   let action: () -> Void
+  let width: CGFloat
   
   var body: some View {
     Button(action: action) {
@@ -12,6 +13,7 @@ struct MenuButton: View {
           .font(.system(size: 16, weight: .semibold))
       }
       .foregroundColor(.white)
+      .frame(width: width)
       .padding(.horizontal, 32)
       .padding(.vertical, 12)
       .background(
@@ -30,5 +32,5 @@ struct MenuButton: View {
 }
 
 #Preview {
-  MenuButton(action: {})
+  MenuButton(action: {}, width: 160)
 } 

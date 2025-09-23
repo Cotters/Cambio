@@ -8,7 +8,7 @@ struct CambioButton: View {
       HStack(spacing: 12) {
         Image(systemName: "star.fill")
           .font(.system(size: 18, weight: .bold))
-        Text("Call Cambio!")
+        Text("Cambio!")
           .font(.system(size: 18, weight: .bold, design: .rounded))
       }
       .foregroundColor(.white)
