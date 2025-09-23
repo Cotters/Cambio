@@ -25,8 +25,8 @@ struct ContentView: View {
         },
       )
     case .soloMenu:
-      SinglePlayerMenu(
-        onGameModeSelected: { mode in gameMode = .soloGame(mode) },
+      SoloPlayerMenu(
+        onGameModeSelected: { gameMode = .soloGame($0) },
       )
       
     case .soloGame:

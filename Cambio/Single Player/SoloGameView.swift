@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum SoloGameMode: TimeInterval {
-  case rush = 30, dash = 60, run = 120 // TODO: rush to 30s
+  case rush = 30, dash = 60, run = 120, untimed = 0
 }
 
 struct SoloGameView: View {
@@ -23,7 +23,7 @@ struct SoloGameView: View {
           
           Spacer()
           
-          if (gameEngine.isPlaying) {
+          if (gameEngine.showTimer) {
             Text("Time Left: \(String(format: "%.1f", gameEngine.timeLeft))s")
               .font(.system(size: 22, weight: .bold, design: .monospaced))
               .foregroundStyle(gameEngine.timeLeft < 10 ? .orange : .black)
@@ -88,6 +88,7 @@ struct SoloGameView: View {
               action: { isPresentingRules.toggle() },
               width: 120,
             )
+            // Necessary to ensure space is occupied.
             if gameEngine.isPlaying {
               CambioButton(action: gameEngine.onCambioTapped)
             } else {

@@ -5,6 +5,7 @@ final class SoloGameEngine: BaseGameEngine {
   
   @EnvironmentObject private var gameCenter: GameCenterManager
   
+  private var gameMode: SoloGameMode? = nil
   private var timer: Timer? = nil
   @Published var timeLeft: Float = 0.0
   
@@ -23,20 +24,22 @@ final class SoloGameEngine: BaseGameEngine {
     return gameState == .playing
   }
   
+  var showTimer: Bool {
+    return isPlaying && gameMode != .untimed
+  }
+  
   var hand: [Card] {
     return hands[.south] ?? []
   }
   
   func beginPlaying(gameMode: SoloGameMode) {
     beginPlaying()
-    startTimer(gameMode: gameMode)
-  }
-
-  private func startTimer(gameMode: SoloGameMode) {
+    self.gameMode = gameMode
     startGameTimer(time: gameMode.rawValue)
   }
   
   private func startGameTimer(time: TimeInterval) {
+    guard gameMode != .untimed else { return }
     timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
     if let newTimer = timer {
       RunLoop.current.add(newTimer, forMode: .common)

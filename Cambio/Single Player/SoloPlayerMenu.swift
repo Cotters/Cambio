@@ -2,7 +2,7 @@ import SwiftUI
 
 let amber: Color = .init(red: 1, green: 0.84, blue: 0.4)
 
-struct SinglePlayerMenu: View {
+struct SoloPlayerMenu: View {
   
   let onGameModeSelected: (SoloGameMode) -> Void
   
@@ -34,13 +34,20 @@ struct SinglePlayerMenu: View {
           gradientColors: [.green, .mint],
           action: { onGameModeSelected(.run) },
         )
+        
+        MainMenuButton(
+          icon: "",
+          text: "Untimed",
+          gradientColors: [.blue, .cyan],
+          action: { onGameModeSelected(.untimed) },
+        )
       }
     }
   }
 }
 
 #Preview {
-  SinglePlayerMenu(
+  SoloPlayerMenu(
     onGameModeSelected: { _ in },
   )
 }
