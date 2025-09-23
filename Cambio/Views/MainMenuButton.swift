@@ -9,8 +9,10 @@ struct MainMenuButton: View {
   var body: some View {
     Button(action: action) {
       HStack(spacing: 12) {
-        Image(systemName: icon)
-          .font(.system(size: 18, weight: .bold))
+        if (!icon.isEmpty) {
+          Image(systemName: icon)
+            .font(.system(size: 18, weight: .bold))
+        }
         Text(text)
           .font(.system(size: 18, weight: .bold, design: .rounded))
       }

@@ -112,13 +112,11 @@ class BaseGameEngine: ObservableObject {
   }
   
   func flipAllCards(for player: Player) {
-    guard isPlaying else { return }
     guard let hand = hands[player] else { return }
     for card in hand { card.flip() }
   }
   
   func turnCardsFaceUp(for player: Player) {
-    guard isPlaying else { return }
     guard let hand = hands[player] else { return }
     for card in hand {
       if (!card.isFaceUp) {
@@ -128,7 +126,6 @@ class BaseGameEngine: ObservableObject {
   }
   
   func flipCardOntoPile() {
-    guard isPlaying else { return }
     guard let topCard = deck.popLast() else { return }
     pile.append(topCard)
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -174,7 +171,6 @@ class BaseGameEngine: ObservableObject {
     if card.rank == pileCard.rank {
       handleMatch(card, for: player)
     } else {
-      print("Wrong match, take a card!")
       card.flip()
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
         self?.handleIncorrectMatch(card, for: player)
@@ -191,14 +187,10 @@ class BaseGameEngine: ObservableObject {
   }
   
   private func handleIncorrectMatch(_ card: Card, for player: Player) {
-    print("taking a card...")
     let hand = hands[player] ?? []
-    print(hand)
     if hand.count < handSize {
-      print("we have room")
       draw(1, for: player)
     } else {
-      print("adding penalty point")
       penalties[player]? += 1
     }
   }
@@ -248,12 +240,14 @@ class BaseGameEngine: ObservableObject {
     return (penalties[.south] ?? 0)
   }
   
-  func setGameOverState() {
-//    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in // TODO: Give time for cards to settle?
-      turnCardsFaceUp(for: .north)
-      turnCardsFaceUp(for: .south)
-      gameState = .gameOver
-//    }
+  func setGameOverState(delayed: Bool = true) {
+    let delay = delayed ? 1.0 : 0
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+      self?.turnCardsFaceUp(for: .north)
+      self?.turnCardsFaceUp(for: .south)
+      self?.gameState = .gameOver
+      self?.viewingCard = nil
+    }
   }
 
 }

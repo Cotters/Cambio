@@ -5,23 +5,49 @@ final class SoloGameEngine: BaseGameEngine {
   
   @EnvironmentObject private var gameCenter: GameCenterManager
   
+  private var timer: Timer? = nil
+  @Published var timeLeft: Float = 0.0
+  
   private var canDrawFromPile: Bool = true
   
   override init(handSize: Int = SP_HAND_SIZE) {
     super.init(handSize: handSize)
   }
   
+  override func restartGame(deck: Deck = Deck.standardWithJokers.shuffled()) {
+    canDrawFromPile = true
+    super.restartGame(deck: deck)
+  }
+  
   override var isPlaying: Bool {
-    return gameState != .gameOver
+    return gameState == .playing
   }
   
   var hand: [Card] {
     return hands[.south] ?? []
   }
   
-  private func drawCardAfterSmallDelay() {
-    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-      self?.drawViewingCardForCurrentPlayer()
+  func beginPlaying(gameMode: SoloGameMode) {
+    beginPlaying()
+    startTimer(gameMode: gameMode)
+  }
+
+  private func startTimer(gameMode: SoloGameMode) {
+    startGameTimer(time: gameMode.rawValue)
+  }
+  
+  private func startGameTimer(time: TimeInterval) {
+    timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(timerFired), userInfo: nil, repeats: true)
+    if let newTimer = timer {
+      RunLoop.current.add(newTimer, forMode: .common)
+    }
+    timeLeft = Float(time)
+  }
+  
+  @objc func timerFired() {
+    timeLeft -= 0.1
+    if (timeLeft <= 0) {
+      onGameEnded()
     }
   }
   
@@ -59,18 +85,28 @@ final class SoloGameEngine: BaseGameEngine {
   
   override func onCambioTapped() {
     guard isPlaying && viewingCard == nil else { return }
-    setGameOverState()
-    saveScore(getSouthScore())
+    onGameEnded()
+  }
+  
+  private func onGameEnded() {
+    timer?.invalidate()
+    setGameOverState(delayed: false)
+    saveScoreToGameCenter(getSouthScore())
   }
   
   override func switchPlayer() {
     // No need.
   }
   
-  func saveScore(_ score: Int) {
+  func saveScoreToGameCenter(_ score: Int) {
+    // TODO: Update for game types.
     Task {
       try await GameCenterManager.shared.submitScore(score)
     }
+  }
+  
+  deinit {
+    timer?.invalidate()
   }
 
 }

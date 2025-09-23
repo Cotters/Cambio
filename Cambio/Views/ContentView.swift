@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum GameMode {
-  case menu, solo, twoPlayer
+  case menu, soloMenu, twoPlayer, soloGame(SoloGameMode)
 }
 
 struct ContentView: View {
@@ -16,7 +16,7 @@ struct ContentView: View {
     case .menu:
       MainMenu(
         onSoloTapped: {
-          gameMode = .solo
+          gameMode = .soloMenu
           soloGameEngine.restartGame()
         },
         onTwoPlayerTapped: {
@@ -24,24 +24,24 @@ struct ContentView: View {
           twoPlayerGameEngine.restartGame()
         },
       )
-    case .solo:
-      if horizontalSizeClass == .compact {
+    case .soloMenu:
+      SinglePlayerMenu(
+        onGameModeSelected: { mode in gameMode = .soloGame(mode) },
+      )
+      
+    case .soloGame:
+      if case let .soloGame(mode) = gameMode {
         SoloGameView(
           gameEngine: soloGameEngine,
-          onMenuTapped: {
-            gameMode = .menu
-          }
-        )
-      } else {
-        // TODO: iPad version
-        // See https://stackoverflow.com/questions/65810300/change-view-based-on-device-swiftui
-        SoloGameView(
-          gameEngine: soloGameEngine,
+          gameMode: mode,
           onMenuTapped: {
             gameMode = .menu
           }
         )
       }
+      // TODO: iPad version
+      // See https://stackoverflow.com/questions/65810300/change-view-based-on-device-swiftui
+      // Using if horizontalSizeClass == .compact
     case .twoPlayer:
       GameView(
         gameEngine: twoPlayerGameEngine,

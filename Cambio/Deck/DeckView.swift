@@ -10,7 +10,7 @@ struct AnimatedRealisticDeckView: View {
   let namespace: Namespace.ID
   let deck: [Card]
   
-  @State private var cardTransforms: [UUID: CardTransform] = [:]
+  @State private var cardTransforms: [String: CardTransform] = [:]
   @State private var previousDeckCount: Int = 0
   
   var body: some View {

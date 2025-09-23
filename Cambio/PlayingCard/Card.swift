@@ -2,12 +2,13 @@ import SwiftUI
 
 class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
   
-  let id = UUID()
+  let id: String// = UUID()
   let rank: Rank
   let suit: Suit
   @Published private(set) var isFaceUp: Bool
   
   init(rank: Rank, suit: Suit, isFaceUp: Bool = false) {
+    self.id = "\(rank.rawValue)\(suit.asEmoji)"
     self.rank = rank
     self.suit = suit
     self.isFaceUp = isFaceUp
@@ -28,7 +29,7 @@ class Card: ObservableObject, Identifiable, Equatable, CustomStringConvertible {
       return ACE_SCORE
     } else if (rank == .king && suit.isRed()) {
       return RED_KING_SCORE
-    } else if (Rank.faceCards.contains(rank)) {
+    } else if (rank.isFaceCard) {
       return FACE_CARD_SCORE
     } else if let rankAsScore = Int(rank.rawValue) {
       return rankAsScore
@@ -72,7 +73,7 @@ class JokerCard: Card {
   
   init(color: JokerColor) {
     self.color = color
-    super.init(rank: .joker, suit: .spades)
+    super.init(rank: .joker, suit: color == .red ? .diamonds : .spades)
   }
   
   override var textColour: Color {
@@ -80,7 +81,7 @@ class JokerCard: Card {
   }
   
   override var description: String {
-    return "\(color.displayName) Joker"
+    return "\(color.displayName)🤡"
   }
   
   override var points: Int {
@@ -138,5 +139,9 @@ enum Rank: String, CaseIterable {
   
   var displayText: String {
     return rawValue
+  }
+  
+  var isFaceCard: Bool {
+    return Rank.faceCards.contains(self)
   }
 }

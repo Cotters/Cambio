@@ -1,26 +1,32 @@
 import SwiftUI
 
+enum SoloGameMode: TimeInterval {
+  case rush = 30, dash = 60, run = 120 // TODO: rush to 30s
+}
+
 struct SoloGameView: View {
+  
   @Namespace private var cardNamespace
+  
   @StateObject var gameEngine: SoloGameEngine
+  let gameMode: SoloGameMode
   let onMenuTapped: () -> Void
   
   var body: some View {
     GeometryReader { geometry in
       ZStack {
-        // Background
-        LinearGradient(
-          gradient: Gradient(colors: [
-            Color(.systemBackground),
-            Color.green.opacity(0.1),
-            Color.blue.opacity(0.15)
-          ]),
-          startPoint: .top,
-          endPoint: .bottom
-        )
-        .ignoresSafeArea()
+        GameBackground()
         
         VStack(spacing: 12) {
+          
+          Spacer()
+          
+          if (gameEngine.isPlaying) {
+            Text("Time Left: \(String(format: "%.1f", gameEngine.timeLeft))s")
+              .font(.system(size: 22, weight: .bold, design: .monospaced))
+              .foregroundStyle(gameEngine.timeLeft < 10 ? .orange : .black)
+          }
+          
           Spacer()
           
           // Center Game Area
@@ -74,6 +80,9 @@ struct SoloGameView: View {
           
           if gameEngine.isPlaying {
             CambioButton(action: gameEngine.onCambioTapped)
+          } else {
+            CambioButton(action: gameEngine.onCambioTapped)
+              .hidden()
           }
         }
       }
@@ -85,13 +94,14 @@ struct SoloGameView: View {
     Task {
       dealInitialCardsAnimated()
       try? await Task.sleep(for: .milliseconds((300 * gameEngine.handSize)))
-      gameEngine.beginPlaying()
-      try? await Task.sleep(for: .milliseconds(500))
       flipAllCards()
       try? await Task.sleep(for: .milliseconds(3000))
       flipAllCards()
       try? await Task.sleep(for: .milliseconds(800))
       gameEngine.flipCardOntoPile()
+      
+      try? await Task.sleep(for: .milliseconds(500))
+      gameEngine.beginPlaying(gameMode: gameMode)
     }
   }
   
@@ -142,5 +152,5 @@ struct SoloGameView: View {
     engine.restartGame()
     return engine
   }()
-  SoloGameView(gameEngine: engine, onMenuTapped: {})
+  SoloGameView(gameEngine: engine, gameMode: .dash, onMenuTapped: {})
 }
