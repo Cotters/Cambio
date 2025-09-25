@@ -1,41 +1,45 @@
 import SwiftUI
 
-enum GameMode {
+enum MenuNavigation {
   case menu, soloMenu, twoPlayer, soloGame(SoloGameMode)
+  case tutorial
 }
 
 struct ContentView: View {
-  @State var gameMode: GameMode = .menu
+  @State var navigation: MenuNavigation = .menu
   @Environment(\.horizontalSizeClass) var horizontalSizeClass
   
-  @StateObject private var soloGameEngine = SoloGameEngine(handSize: 8)
-  @StateObject private var twoPlayerGameEngine = BaseGameEngine(handSize: 4)
-  
   var body: some View {
-    switch gameMode {
+    switch navigation {
     case .menu:
       MainMenu(
         onSoloTapped: {
-          gameMode = .soloMenu
-          soloGameEngine.restartGame()
+          navigation = .soloMenu
         },
         onTwoPlayerTapped: {
-          gameMode = .twoPlayer
-          twoPlayerGameEngine.restartGame()
+          navigation = .twoPlayer
         },
+        onHowToPlayTapped: {
+          navigation = .tutorial
+        },
+      )
+    case .tutorial:
+      TutorialView(
+        onTutorialFinished: {
+          navigation = .menu
+        }
       )
     case .soloMenu:
       SoloPlayerMenu(
-        onGameModeSelected: { gameMode = .soloGame($0) },
+        onGameModeSelected: { navigation = .soloGame($0) },
       )
       
     case .soloGame:
-      if case let .soloGame(mode) = gameMode {
+      if case let .soloGame(mode) = navigation {
         SoloGameView(
-          gameEngine: soloGameEngine,
           gameMode: mode,
           onMenuTapped: {
-            gameMode = .menu
+            navigation = .menu
           }
         )
       }
@@ -44,9 +48,9 @@ struct ContentView: View {
       // Using if horizontalSizeClass == .compact
     case .twoPlayer:
       GameView(
-        gameEngine: twoPlayerGameEngine,
+//        gameEngine: twoPlayerGameEngine,
         onMenuTapped: {
-          gameMode = .menu
+          navigation = .menu
         }
       )
     }

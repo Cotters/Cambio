@@ -37,8 +37,12 @@ struct SoloPlayerHand: View {
         }
       }
     }
-    .frame(height: HAND_CARD_HEIGHT * 2 + 8) // Height for 2 rows + spacing
-    .padding(.horizontal, 8)
+    .frame(
+      width: .infinity,
+      height: (HAND_CARD_HEIGHT * max(1, CGFloat(cards.count) / 4)) + 8,
+    )
+    .frame(maxWidth: 500)
+    .padding(.horizontal, 16)
     .padding(.vertical, 12)
     .background(
       RoundedRectangle(cornerRadius: 16)
@@ -62,7 +66,7 @@ struct SoloPlayerHand: View {
   VStack {
     SoloPlayerHand(
       namespace: namespace,
-      cards: Array(faceUpDeck.shuffled().prefix(8)),
+      cards: Array(faceUpDeck.shuffled().prefix(4)),
       onCardSelected: { $0.flip() }
     )
   }

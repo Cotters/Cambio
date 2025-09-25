@@ -9,6 +9,7 @@ struct MainMenu : View {
   
   let onSoloTapped: () -> Void
   let onTwoPlayerTapped: () -> Void
+  let onHowToPlayTapped: () -> Void
     
   var body: some View {
     ZStack {
@@ -56,6 +57,25 @@ struct MainMenu : View {
           
           MainMenuButton(
             icon: "book.fill",
+            text: "Tutorial",
+            gradientColors: [.teal, .blue],
+            action: onHowToPlayTapped,
+          )
+          .overlay(alignment: .topTrailing) {
+            Text("Welcome!")
+              .font(.system(size: 14))
+              .fontDesign(.rounded)
+              .fontWeight(.bold)
+              .foregroundColor(.white)
+              .padding(.horizontal, 8)
+              .padding(.vertical, 4)
+              .background(Color.red)
+              .cornerRadius(8)
+              .offset(x: 10, y: -10)
+          }
+          
+          MainMenuButton(
+            icon: "book.fill",
             text: "The Rules",
             gradientColors: [.blue, .teal],
             action: { isPresentingRules.toggle() },
@@ -94,5 +114,6 @@ struct MainMenu : View {
   MainMenu(
     onSoloTapped: {},
     onTwoPlayerTapped: {},
+    onHowToPlayTapped: {},
   )
 }

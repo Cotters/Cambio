@@ -4,7 +4,7 @@ struct GameView: View {
   @Namespace private var cardNamespace
   @Namespace private var currentPlayerNamespace
   
-  @StateObject var gameEngine: BaseGameEngine
+  @StateObject var gameEngine = BaseGameEngine(handSize: 4)
   let onMenuTapped: () -> Void
   
   var body: some View {
@@ -217,6 +217,5 @@ struct ViewingCardDisplay: View {
 }
 
 #Preview {
-  let engine = BaseGameEngine()
-  GameView(gameEngine: engine, onMenuTapped: {})
+  GameView(onMenuTapped: {})
 }

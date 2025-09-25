@@ -1,13 +1,13 @@
 import SwiftUI
 import GameKit
 
-final class SoloGameEngine: BaseGameEngine {
+class SoloGameEngine: BaseGameEngine {
   
   @EnvironmentObject private var gameCenter: GameCenterManager
   
   private var gameMode: SoloGameMode? = nil
   private var timer: Timer? = nil
-  @Published var timeLeft: Float = 0.0
+  @Published private(set) var timeLeft: Float = 0.0
   
   private var canDrawFromPile: Bool = true
   

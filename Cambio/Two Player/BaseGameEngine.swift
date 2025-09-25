@@ -41,10 +41,6 @@ class BaseGameEngine: ObservableObject {
     self.handSize = handSize
   }
   
-  init(handSize: Int = HAND_SIZE, deck: Deck = Deck.standardWithJokers.shuffled()) {
-    self.handSize = handSize
-  }
-  
 #if DEBUG
   init() {
     self.handSize = 4

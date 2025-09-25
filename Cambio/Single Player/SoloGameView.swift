@@ -8,7 +8,7 @@ struct SoloGameView: View {
   
   @Namespace private var cardNamespace
   
-  @StateObject var gameEngine: SoloGameEngine
+  @StateObject private var gameEngine = SoloGameEngine(handSize: SP_HAND_SIZE)
   let gameMode: SoloGameMode
   let onMenuTapped: () -> Void
   
@@ -68,7 +68,7 @@ struct SoloGameView: View {
                 }
               }
             }
-            .frame(height: HAND_CARD_HEIGHT * 2 + 48) // Height for 2 rows + spacing + extra padding
+            .frame(height: HAND_CARD_HEIGHT * CGFloat(gameEngine.hand.count / 4) + 48)
           }
           .padding(.horizontal, 16)
           .padding(.vertical, 12)
@@ -162,10 +162,5 @@ struct SoloGameView: View {
 }
 
 #Preview {
-  let engine = {
-    let engine = SoloGameEngine()
-    engine.restartGame()
-    return engine
-  }()
-  SoloGameView(gameEngine: engine, gameMode: .dash, onMenuTapped: {})
+  SoloGameView(gameMode: .dash, onMenuTapped: {})
 }
